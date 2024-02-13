@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Reset default margin and padding */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: #f8f8f8; /* Or any other color you prefer */
+}
+
+/* Ensure the root and App fill the viewport */
+#root, .App {
+  height: 100%;
+}
+
+/* Container for the entire page content */
+.signup-container {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+}
+
+/* Styles for the animated text elements */
+.animated-text {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animated-text.enter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Style for the main title "SEMAntOR" */
+.title {
+  font-size: 3em;
+  color: #333;
+  margin: 0;
+}
+
+/* Style for the subtitle "We search the world for you" */
+.subtitle {
+  font-size: 1.2em;
+  color: #666;
+  margin: 0;
+  transition-delay: 0.5s; /* Delay for subtitle appearance */
+}
+
+/* Container for the form, initially hidden */
+.form-container {
+  opacity: 0;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition-delay: 0.3s;
+  width: 100%;
+  max-width: 400px; /* Adjust the form width as needed */
+  margin-top: 2em; /* Space from the subtitle to the form */
+}
+
+/* Animation effect for the form sliding up */
+.form-container.slide-up,
+.form-container.enter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Title above the sign-up and login form */
+.form-title {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 0.5em;
+}
+
+/* Styling for the sign-up and login form itself */
+.signup-form {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling for the input fields in the form */
+.signup-form input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Styles for the sign-up and login button */
+.signup-button {
+  width: 100%;
+  background-color: #30C3BA;
+  color: white;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the sign-up and login button */
+.signup-button:hover {
+  background-color: #28afa4;
+}
+
+/* Styling for the login link and back to sign up link */
+.login-link {
+  color: #30C3BA;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect for the login link and back to sign up link */
+.login-link:hover {
+  color: #28afa4;
+}
