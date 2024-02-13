@@ -72,7 +72,8 @@ body, html {
 
 /* Title above the sign-up and login form */
 .form-title {
-  font-size: 2em;
+  font-size: 3em;
+  font-weight: 600;
   color: #333;
   margin-bottom: 0.5em;
 }

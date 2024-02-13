@@ -57,6 +57,7 @@ const SignUpPage = () => {
               <input type="text" placeholder="Company" />
               <input type="email" placeholder="Email" />
               <input type="password" placeholder="Password" />
+              <p>must be 8 or more characters and contain at least 1 number and 1 special character.</p>
               <button type="submit" className="signup-button">SIGN UP</button>
               <p className="login-link" onClick={toggleForm}>Already a user? LOGIN</p>
             </form>
