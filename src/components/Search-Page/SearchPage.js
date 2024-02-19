@@ -124,6 +124,7 @@ const Semantor = () => {
                 Keyword
               </button>
             </div>
+            
             <div className="search-input">
               <FaCalendar className="calendar-icon" />
               <input type="text" placeholder="Semantic / Keyword Search:" />
