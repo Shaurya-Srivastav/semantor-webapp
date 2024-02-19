@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./SearchPage.css"; // Make sure to create this CSS file and include the styles
-import { FaUser, FaHeart, FaCalendar, FaSearch } from "react-icons/fa";
+import { FaUser, FaHeart, FaCalendar, FaSearch, FaChevronDown, FaChevronUp} from "react-icons/fa";
 
 const Semantor = () => {
   // Initialize with an empty array for no active tabs or with some default active tabs
@@ -16,6 +16,21 @@ const Semantor = () => {
   };
   const [searchType, setSearchType] = useState("semantic");
 
+
+  const SidebarDropdown = ({ title, children }) => {
+    const [isOpen, setIsOpen] = useState(false);
+  
+    return (
+      <div className="sidebar-dropdown">
+        <div className="sidebar-action" onClick={() => setIsOpen(!isOpen)}>
+          {title}
+          {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        </div>
+        {isOpen && <div className="dropdown-content">{children}</div>}
+      </div>
+    );
+  };
+
   return (
     <div className="semantor-container">
       <header className="semantor-header">
@@ -29,11 +44,48 @@ const Semantor = () => {
 
       <div className="semantor-body">
         <aside className="semantor-sidebar">
-          <div className="sidebar-item">Your project</div>
-          <div className="sidebar-item">Your history</div>
-          <div className="sidebar-action">+ Filters</div>
-          <div className="sidebar-action">+ History</div>
-        </aside>
+        <div className="sidebar-item">Your project</div>
+        <div className="sidebar-item">Your history</div>
+        <br></br>
+        <div className="line"></div>
+        <br></br>
+        <SidebarDropdown title="+ Filters">
+          <label>
+            Start date:
+            <input type="date" name="start-date" />
+          </label>
+          <label>
+            End date:
+            <input type="date" name="end-date" />
+          </label>
+          <div className="line"></div>
+          <br></br>
+          <label>
+            <input type="checkbox" /> Granted
+          </label>
+          <div className="line"></div>
+          <br></br>
+          <label>
+            <input type="checkbox" /> Pregranted
+          </label>
+          
+        </SidebarDropdown>
+        <SidebarDropdown title="+ History">
+          {/* Map over your history items and render them here */}
+          <div className="history-item">
+            <span className="history-item-name">Item Nameasdhasdkjashkjdahskjdas</span>
+            <span className="history-item-date">12/30/2024</span>
+          </div>
+          <div className="history-item">
+            <span className="history-item-name">Item Nameasdhasdkjashkjdahskjdas</span>
+            <span className="history-item-date">Date</span>
+          </div>
+          <div className="history-item">
+            <span className="history-item-name">Item Nameasdhasdkjashkjdahskjdas</span>
+            <span className="history-item-date">Date</span>
+          </div>
+        </SidebarDropdown>
+      </aside>
 
         <main className="semantor-main">
           <nav className="semantor-nav">

@@ -93,7 +93,7 @@
 }
 
 .semantor-sidebar {
-  width: 250px; /* Adjust width as per design */
+  width: 20%; /* Adjust width as per design */
   font-size: 0.9rem;
   color: #4a4a4a; /* Adjust text color as per design */
 }
@@ -105,15 +105,169 @@
   font-weight: normal; /* Adjust font weight as per design */
 }
 
+.sidebar-dropdown {
+  margin-bottom: 20px;
+}
+
 .sidebar-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
   color: #00b5ad;
   font-weight: bold;
-  margin-top: 20px; /* Add more margin to top as per design */
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
+
+.sidebar-action:hover {
+  background-color: rgba(0, 181, 173, 0.1); /* Light teal background on hover */
+}
+
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e6e6e6; /* subtle border color */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Soft shadow for depth */
+  border-radius: 5px; /* Consistent border-radius */
+  padding: 15px;
+  transition: all 0.3s ease-out;
+}
+
+.sidebar-dropdown:hover .dropdown-content {
+  transform: translateY(0);
+  opacity: 1;
+  max-height: 500px; /* Ensure max-height is more than the content height */
+}
+
+.dropdown-content label {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.dropdown-content input[type="date"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Include padding in width */
+}
+
+.dropdown-content input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Styling the checkboxes a bit more modern/urban */
+.dropdown-content input[type="checkbox"] + span {
+  vertical-align: middle;
+}
+
+/* Custom checkbox styling */
+.dropdown-content input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  margin: 0;
+  font: inherit;
+  color: #333;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transform: translateY(-0.075em);
+  display: grid;
+  place-content: center;
+}
+
+.dropdown-content input[type="checkbox"]:checked:before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  background-color: #00b5ad;
+}
+
+.history-dropdown {
+  margin-bottom: 20px;
+}
+
+.history-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: #00b5ad;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.history-action:hover {
+  background-color: rgba(0, 181, 173, 0.1); /* Light teal background on hover */
+}
+
+.history-content {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e6e6e6; /* Subtle border color */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Soft shadow for depth */
+  border-radius: 5px; /* Consistent border-radius */
+  padding: 15px;
+  transition: all 0.3s ease-out;
+}
+
+/* Transition for the dropdown entering */
+.history-dropdown:hover .history-content {
+  transform: translateY(0);
+  opacity: 1;
+  max-height: 500px; /* Ensure max-height is more than the content height */
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd; /* Separator for each history item */
+  color: #333;
+  font-size: 0.9rem;
+}
+
+
+.history-item-name {
+  white-space: nowrap; /* Ensure the text stays on a single line */
+  overflow: hidden; /* Hide the overflowed text */
+  text-overflow: ellipsis; /* Replace overflow with an ellipsis */
+  max-width: 70%; /* You may need to adjust this */
+}
+
+.history-item-date {
+  white-space: nowrap;
+}
+
+.history-item:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+/* Add some more styling if you need to for hover effects or for the chevron icons */
+.history-action .chevron-icon {
+  transition: transform 0.3s ease;
+}
+
+.history-dropdown:hover .chevron-icon {
+  transform: rotate(180deg); /* Flip the chevron icon on hover */
+}
+
 
 .semantor-main {
   flex-grow: 1;
-  padding-left: 20px; /* Adjust spacing as needed */
+  padding-left: 50px; /* Adjust spacing as needed */
 }
 
 .search-type-buttons {
@@ -171,5 +325,4 @@
   font-size: 1.5rem;
 }
 
-/* If your Figma design has specific color codes, font sizes, or padding/margins,
-   replace the values here with those exact numbers. */
+
