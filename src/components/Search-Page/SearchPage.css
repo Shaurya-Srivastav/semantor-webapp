@@ -1,16 +1,20 @@
+/* Global */
+@import 'react-datepicker/dist/react-datepicker.css';
+
 
 .line{
-  height: 3px;
+  width: 50%;
+  height: 2px;
   background-color: black;
-  width: 25%;
 }
+
 /* SearchPage.css */
 .semantor-container {
   font-family: 'Helvetica Neue', Arial, sans-serif;
   max-width: 90%;
   margin: 0 auto;
   color: #333;
-  padding: 20px; /* Adjust padding for overall alignment */
+  padding: 20px;
 }
 
 .semantor-header {
@@ -21,11 +25,10 @@
 }
 
 .semantor-header h1 {
-  font-size: 2rem; /* Adjust font size as per design */
+  font-size: 2rem;
   color: #333;
   margin: 0;
-  font-weight: bold; /* Make it bold as per design */
-  letter-spacing: normal; /* Adjust letter spacing as per design */
+  font-weight: bold;
 }
 
 .semantor-user-icons {
@@ -35,57 +38,45 @@
 
 .user-icon,
 .heart-icon {
-  font-size: 1.5rem; /* Adjust icon size as per design */
+  font-size: 1.5rem;
   margin: 0 10px;
-  color: #333; /* Adjust icon color as per design */
+  color: #333;
 }
+
 .semantor-nav {
   display: flex;
-  justify-content: space-between; /* Distribute space evenly between the buttons */
-  align-items: center; /* Align items vertically */
+  justify-content: space-between;
+  align-items: center;
   padding: 10px 0;
-  background-color: #f8f8f8; /* Assuming a light grey background */
-  border-top: 1px solid #ddd; /* Top border line */
-  border-bottom: 1px solid #ddd; /* Bottom border line */
+  background-color: #f8f8f8;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 .nav-button {
   background: none;
   border: none;
-  flex-grow: 1; /* Buttons will grow to fill up the space */
+  flex-grow: 1;
   display: flex;
-  justify-content: center; /* Center the text inside the button */
+  justify-content: center;
   align-items: center;
-  padding: 10px 0; /* Padding top and bottom */
-  margin: 0 1px; /* Space between buttons */
-  font-size: 1rem; /* Adjust font size to match design */
+  padding: 10px 0;
+  margin: 0 1px;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   outline: none;
-  color: #333; /* Darker text for better contrast */
-  font-weight: 500; /* Semi-bold font weight */
-  text-transform: capitalize; /* Capitalize the first letter */
+  color: #333;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 .nav-button:hover,
 .nav-button.active {
-  color: #fff; /* White text for active/hover state */
-  background-color: #00b5ad; /* Teal background for active/hover state */
+  color: #fff;
+  background-color: #00b5ad;
   border-radius: 20%;
 }
-
-/* Remove the left and right padding from the first and last button to align with the search bar */
-.nav-button:first-child,
-.nav-button:last-child {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-/* Set the border color for the button dividers */
-.nav-button + .nav-button {
-  border-left: 1px solid #ddd;
-}
-
 
 .semantor-body {
   display: flex;
@@ -93,16 +84,16 @@
 }
 
 .semantor-sidebar {
-  width: 20%; /* Adjust width as per design */
+  width: 20%;
   font-size: 0.9rem;
-  color: #4a4a4a; /* Adjust text color as per design */
+  color: #4a4a4a;
 }
 
 .sidebar-item,
 .sidebar-action {
   margin: 10px 0;
   cursor: pointer;
-  font-weight: normal; /* Adjust font weight as per design */
+  font-weight: normal;
 }
 
 .sidebar-dropdown {
@@ -122,24 +113,18 @@
 }
 
 .sidebar-action:hover {
-  background-color: rgba(0, 181, 173, 0.1); /* Light teal background on hover */
+  background-color: rgba(0, 181, 173, 0.1);
 }
 
 .dropdown-content {
   display: flex;
   flex-direction: column;
   background: white;
-  border: 1px solid #e6e6e6; /* subtle border color */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Soft shadow for depth */
-  border-radius: 5px; /* Consistent border-radius */
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 5px;
   padding: 15px;
   transition: all 0.3s ease-out;
-}
-
-.sidebar-dropdown:hover .dropdown-content {
-  transform: translateY(0);
-  opacity: 1;
-  max-height: 500px; /* Ensure max-height is more than the content height */
 }
 
 .dropdown-content label {
@@ -155,19 +140,10 @@
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-sizing: border-box; /* Include padding in width */
+  box-sizing: border-box;
 }
 
-.dropdown-content input[type="checkbox"] {
-  margin-right: 10px;
-}
 
-/* Styling the checkboxes a bit more modern/urban */
-.dropdown-content input[type="checkbox"] + span {
-  vertical-align: middle;
-}
-
-/* Custom checkbox styling */
 .dropdown-content input[type="checkbox"] {
   -webkit-appearance: none;
   appearance: none;
@@ -182,7 +158,7 @@
   transform: translateY(-0.075em);
   display: grid;
   place-content: center;
-}
+} 
 
 .dropdown-content input[type="checkbox"]:checked:before {
   content: '';
@@ -192,59 +168,20 @@
   background-color: #00b5ad;
 }
 
-.history-dropdown {
-  margin-bottom: 20px;
-}
-
-.history-action {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  color: #00b5ad;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.history-action:hover {
-  background-color: rgba(0, 181, 173, 0.1); /* Light teal background on hover */
-}
-
-.history-content {
-  display: flex;
-  flex-direction: column;
-  background: white;
-  border: 1px solid #e6e6e6; /* Subtle border color */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Soft shadow for depth */
-  border-radius: 5px; /* Consistent border-radius */
-  padding: 15px;
-  transition: all 0.3s ease-out;
-}
-
-/* Transition for the dropdown entering */
-.history-dropdown:hover .history-content {
-  transform: translateY(0);
-  opacity: 1;
-  max-height: 500px; /* Ensure max-height is more than the content height */
-}
-
 .history-item {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid #ddd; /* Separator for each history item */
+  border-bottom: 1px solid #ddd;
   color: #333;
   font-size: 0.9rem;
 }
 
-
 .history-item-name {
-  white-space: nowrap; /* Ensure the text stays on a single line */
-  overflow: hidden; /* Hide the overflowed text */
-  text-overflow: ellipsis; /* Replace overflow with an ellipsis */
-  max-width: 70%; /* You may need to adjust this */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
 }
 
 .history-item-date {
@@ -252,30 +189,20 @@
 }
 
 .history-item:last-child {
-  border-bottom: none; /* No border for the last item */
+  border-bottom: none;
 }
-
-/* Add some more styling if you need to for hover effects or for the chevron icons */
-.history-action .chevron-icon {
-  transition: transform 0.3s ease;
-}
-
-.history-dropdown:hover .chevron-icon {
-  transform: rotate(180deg); /* Flip the chevron icon on hover */
-}
-
 
 .semantor-main {
   flex-grow: 1;
-  padding-left: 50px; /* Adjust spacing as needed */
+  padding-left: 50px;
 }
 
 .search-type-buttons {
   display: flex;
   padding: 10px;
   margin-bottom: 10px;
-  width: 22%;
-  border-radius: 10%;
+  width: auto; /* Changed from fixed width to auto for flexibility */
+  justify-content: start; /* Align buttons to start for better responsiveness */
 }
 
 .search-type-button {
@@ -284,7 +211,7 @@
   border: 1px solid #ddd;
   border-radius: 20px;
   padding: 10px 20px;
-  margin-right: 30px;
+  margin-right: 10px; /* Reduced margin for closer button grouping */
   cursor: pointer;
   outline: none;
   transition: all 0.3s ease;
@@ -295,7 +222,6 @@
   color: white;
   border-color: #00b5ad;
 }
-
 
 .search-section {
   display: flex;
@@ -321,8 +247,22 @@
 
 .calendar-icon,
 .search-icon {
-  color: #333;
+  color: #00b5ad;
   font-size: 1.5rem;
 }
 
+/* React Datepicker Customization */
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  display: block; 
+}
 
+
+/* Ensure the calendar icon and input field align nicely */
+.search-input {
+  position: relative; /* For absolute positioning of the datepicker */
+}
+
+.calendar-icon {
+  cursor: pointer; /* Change cursor to pointer to indicate clickable */
+}
