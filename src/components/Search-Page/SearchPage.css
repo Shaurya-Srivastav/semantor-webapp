@@ -490,6 +490,26 @@
 .close-button:focus {
   outline: none; 
 }
+.download-button {
+  background-color: #00b5ad; /* Teal background to match the site */
+  color: white; /* White text for visibility */
+  border: none; /* No border for a clean look */
+  padding: 12px 24px; /* Ample padding for better interaction area */
+  border-radius: 8px; /* Rounded corners for modern look */
+  font-weight: 600; /* Bold text */
+  cursor: pointer; /* Cursor pointer to indicate interactiveness */
+  font-size: 1em; /* Proper font size */
+  margin-left: auto; /* Aligns the button to the right */
+  display: block; /* Ensure it takes up block space */
+  width: fit-content; /* Auto width based on content */
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
+}
+
+.download-button:hover {
+  background-color: #00796b; /* A darker shade of teal for the hover state */
+  transform: translateY(-2px); /* Slight upward transition for interactive feedback */
+}
+
 
 
 
