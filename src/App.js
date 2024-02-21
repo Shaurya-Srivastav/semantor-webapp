@@ -1,8 +1,8 @@
 import './App.css';
 import React from 'react';
-import SignUpPage from './components/Sign-Up-Page/SignUpPage';
-import SearchPage from './components/Search-Page/SearchPage';
-import HistoryPage from './components/History-Page/HistoryPage';
+import SignUpPage from './Pages/Sign-Up-Page/SignUpPage';
+import SearchPage from './Pages/Search-Page/SearchPage';
+import HistoryPage from './Pages/History-Page/HistoryPage';
 
 function App() {
   return (
