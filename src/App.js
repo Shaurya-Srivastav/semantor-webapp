@@ -1,16 +1,22 @@
 import './App.css';
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import SignUpPage from './Pages/Sign-Up-Page/SignUpPage';
 import SearchPage from './Pages/Search-Page/SearchPage';
 import HistoryPage from './Pages/History-Page/HistoryPage';
 
 function App() {
   return (
-    <div className="App">
-      {/*<SignUpPage />*/}
-      {/* <SearchPage /> */}
-      <HistoryPage />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<SignUpPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="*" element={<Navigate replace to="/" />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
