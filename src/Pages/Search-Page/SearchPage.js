@@ -104,7 +104,7 @@ const Semantor = () => {
 
       <div className="semantor-body">
         <aside className="semantor-sidebar">
-          <div className="sidebar-item"><a href="/">Your Projects</a></div>
+          <div className="sidebar-item"><a href="/project">Your Projects</a></div>
           <br></br>
           <div className="sidebar-item"><a href="/history">Your history</a></div>
           <br />
@@ -193,9 +193,8 @@ const Semantor = () => {
             <br></br>
             <br></br>
 
-            <div className="result-box">
-              <Result></Result>
-            </div>
+        
+            <Result></Result>
 
 
             <PaginationControls></PaginationControls>
