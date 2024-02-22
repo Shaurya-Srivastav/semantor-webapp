@@ -1,5 +1,5 @@
 import React from 'react';
-import './PaginationControls.css'; 
+import './PaginationControls.css';
 
 const PaginationControls = ({ currentPage, totalPages, onPageChange }) => {
   return (
@@ -11,11 +11,11 @@ const PaginationControls = ({ currentPage, totalPages, onPageChange }) => {
       >
         Previous
       </button>
-      
+
       <span className="pagination-current-page">
         Page {currentPage} of {totalPages}
       </span>
-      
+
       <button
         className="pagination-button"
         onClick={() => onPageChange(currentPage + 1)}

@@ -3,7 +3,7 @@ import './SignUpPage.css';
 
 const SignUpPage = () => {
   const [animationStage, setAnimationStage] = useState(0);
-  const [showLogin, setShowLogin] = useState(false); // State to toggle between sign up and login
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     if (!showLogin) {
@@ -20,10 +20,10 @@ const SignUpPage = () => {
   const toggleForm = () => {
     setShowLogin(!showLogin);
     if (!showLogin) {
-      // When transitioning to login, skip the animations
+
       setAnimationStage(3);
     } else {
-      // Reset the animation when going back to sign up
+
       setAnimationStage(0);
     }
   };

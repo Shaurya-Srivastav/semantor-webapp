@@ -1,0 +1,239 @@
+.search-result {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s, transform 0.3s;
+    border-left: 4px solid #00b5ad;
+  }
+  
+  .search-result:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .search-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .icon-heart,
+  .icon-info {
+    font-size: 1.5em;
+    color: #00b5ad;
+    margin-right: 8px;
+  }
+  
+  .search-result-title-section {
+    flex-grow: 1;
+  }
+  
+  .search-result-subtitle {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .search-result-subtitle>span {
+    margin-right: 8px;
+  }
+  
+  .search-result-title {
+    font-weight: 600;
+    font-size: 1em;
+    color: #333;
+    flex-grow: 1;
+  }
+  
+  .search-result-meta {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  
+  .search-result-number {
+    font-size: 0.9em;
+    color: #999;
+    margin-right: 8px;
+  }
+  
+  .button-open {
+    background-color: #00b5ad;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .search-result-description {
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 20;
+    -webkit-box-orient: vertical;
+    max-height: 4.8em;
+  }
+  
+  .search-result-actions {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .button-open,
+  .search-result-action {
+    background-color: #fff;
+    color: #00b5ad;
+    border: 2px solid #00b5ad;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .button-open:hover,
+  .search-result-action:hover {
+    background-color: #00b5ad;
+    color: #fff;
+    border-color: #00796b;
+  }
+  
+  .icon-heart-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .icon-heart.liked {
+    color: red;
+  }
+  
+  .icon-heart-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .icon-heart {
+    font-size: 1.5rem;
+    transition: color 0.3s;
+  }
+  
+  .icon-heart.liked,
+  .icon-heart.liked.like-animation {
+    color: #e74c3c;
+  }
+  
+  .like-animation {
+    animation: likeAnimation 0.6s ease forwards;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    z-index: 1000;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 999;
+  }
+  
+  .close-button {
+    background-color: #00b5ad;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .close-button:hover {
+    background-color: #008c8a;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .close-button:focus {
+    outline: none;
+  }
+  
+  .download-button {
+    background-color: #00b5ad;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1em;
+    margin-left: auto;
+    display: block;
+    width: fit-content;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  .download-button:hover {
+    background-color: #00796b;
+    transform: translateY(-2px);
+  }
+  
+  @keyframes likeAnimation {
+  
+    0%,
+    100% {
+      transform: scale(1);
+    }
+  
+    50% {
+      transform: scale(1.3);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .search-result-actions {
+      justify-content: center;
+    }
+  }
