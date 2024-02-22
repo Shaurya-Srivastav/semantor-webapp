@@ -1,17 +1,25 @@
-
+/* Import external CSS file */
 @import 'react-datepicker/dist/react-datepicker.css';
 
+a{
+  text-decoration: none;
+  color: black;
+}
 
-.line{
+/* Define a class for a horizontal line */
+.line {
   width: 50%;
   height: 2px;
   background-color: black;
 }
-.red{
+
+/* Define a class for a red background with white text */
+.red {
   background-color: red;
   color: white;
 }
 
+/* Define styles for the main container */
 .semantor-container {
   font-family: 'Helvetica Neue', Arial, sans-serif;
   max-width: 90%;
@@ -20,6 +28,7 @@
   padding: 20px;
 }
 
+/* Define styles for the header section */
 .semantor-header {
   display: flex;
   justify-content: space-between;
@@ -46,6 +55,7 @@
   color: #333;
 }
 
+/* Define styles for the navigation section */
 .semantor-nav {
   display: flex;
   justify-content: space-between;
@@ -81,6 +91,7 @@
   border-radius: 20%;
 }
 
+/* Define styles for the body section */
 .semantor-body {
   display: flex;
   margin-top: 20px;
@@ -92,11 +103,13 @@
   color: #4a4a4a;
 }
 
+
 .sidebar-item,
 .sidebar-action {
   margin: 10px 0;
   cursor: pointer;
   font-weight: normal;
+  text-decoration: none;
 }
 
 .sidebar-dropdown {
@@ -145,7 +158,6 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-
 
 .dropdown-content input[type="checkbox"] {
   -webkit-appearance: none;
@@ -254,13 +266,10 @@
   font-size: 1.5rem;
 }
 
-
 .react-datepicker-wrapper,
 .react-datepicker__input-container {
   display: block; 
 }
-
-
 
 .search-input {
   position: relative; 
@@ -288,7 +297,6 @@
 .filter-submit-button:hover {
   background-color: #008c8a; 
 }
-
 
 .search-result {
   background-color: #fff;
@@ -320,6 +328,7 @@
   color: #00b5ad;
   margin-right: 8px;
 }
+
 .search-result-title-section {
   flex-grow: 1; 
 }
@@ -335,6 +344,7 @@
 .search-result-subtitle > span {
   margin-right: 8px; 
 }
+
 .search-result-title {
   font-weight: 600;
   font-size: 1em;
@@ -437,10 +447,10 @@
   color: #e74c3c; 
 }
 
-
 .like-animation {
   animation: likeAnimation 0.6s ease forwards;
 }
+
 .modal {
   position: fixed;
   top: 50%;
@@ -464,7 +474,6 @@
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 999;
 }
-
 
 .close-button {
   background-color: #00b5ad; 
@@ -490,6 +499,7 @@
 .close-button:focus {
   outline: none; 
 }
+
 .download-button {
   background-color: #00b5ad; 
   color: white; 
@@ -510,7 +520,6 @@
   transform: translateY(-2px); 
 }
 
-
 @keyframes likeAnimation {
   0%, 100% {
     transform: scale(1); 
@@ -519,7 +528,6 @@
     transform: scale(1.3); 
   }
 }
-
 
 @media (max-width: 768px) {
   .search-result-actions {
