@@ -6,26 +6,17 @@ const SignUpPage = () => {
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
-    if (!showLogin) {
-      const timeouts = [
-        setTimeout(() => setAnimationStage(1), 500),
-        setTimeout(() => setAnimationStage(2), 2000),
-        setTimeout(() => setAnimationStage(3), 3500),
-      ];
+    const timeouts = [
+      setTimeout(() => setAnimationStage(1), 500),
+      setTimeout(() => setAnimationStage(2), 2000),
+      setTimeout(() => setAnimationStage(3), 3500),
+    ];
 
-      return () => timeouts.forEach(clearTimeout);
-    }
-  }, [showLogin]);
+    return () => timeouts.forEach(clearTimeout);
+  }, []);
 
   const toggleForm = () => {
     setShowLogin(!showLogin);
-    if (!showLogin) {
-
-      setAnimationStage(3);
-    } else {
-
-      setAnimationStage(0);
-    }
   };
 
   return (
