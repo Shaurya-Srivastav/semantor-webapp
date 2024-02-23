@@ -17,9 +17,7 @@ const Semantor = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [sidebarProjects, setSidebarProjects] = useState([]);
   const [searchType, setSearchType] = useState("semantic");
-  const nonSelectedProjects = results.filter(
-    (p) => p.id !== selectedProject?.id
-  );
+  const nonSelectedProjects = results.filter(p => p.id !== selectedProject?.id);
   const [hasSelectedProject, setHasSelectedProject] = useState(false);
 
   const handleCardClick = (project) => {
@@ -32,6 +30,7 @@ const Semantor = () => {
     setSelectedProject(null);
     setHasSelectedProject(false);
   };
+  
 
   return (
     <div className="semantor-container">
@@ -55,23 +54,25 @@ const Semantor = () => {
           <br />
           <div className="line"></div>
           <br />
-          {hasSelectedProject && (
-            <>
-              <button className="back-button" onClick={clearSelection}>
-                Back to all projects
-              </button>
-              <div className="sidebar-title">Projects</div>
-              {nonSelectedProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="sidebar-project-item"
-                  onClick={() => handleCardClick(project)}
-                >
-                  {project.title}
-                </div>
-              ))}
-            </>
-          )}
+          <button className="add-project-btn">
+            Add Project
+          </button>
+
+        {hasSelectedProject && (
+          <>
+            <button className="back-button" onClick={clearSelection}>
+              Back to all projects
+            </button>
+            <div className="sidebar-title">Projects</div>
+            {nonSelectedProjects.map(project => (
+              <div key={project.id} className="sidebar-project-item" onClick={() => handleCardClick(project)}>
+                {project.title}
+              </div>
+            ))}
+          </>
+        )}
+          
+
         </aside>
 
         <main className="semantor-main">

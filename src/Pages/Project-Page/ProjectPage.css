@@ -81,3 +81,29 @@
   border-bottom: 1px solid #eaeaea;
   margin-bottom: 10px;
 }
+
+.add-project-btn {
+  background-color: #00b5ad; /* Theme color */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 25px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  outline: none;
+  font-size: 1rem;
+}
+
+.add-project-btn:hover, .add-project-btn:focus {
+  background-color: #00897b; /* Slightly darker shade on hover */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Larger shadow for hover */
+  transform: translateY(-2px); /* Lift the button up on hover */
+}
+
+.add-project-btn:active {
+  transform: translateY(1px); /* Slightly down to mimic button press */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Smaller shadow for press */
+}
+
