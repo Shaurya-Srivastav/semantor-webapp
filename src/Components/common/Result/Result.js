@@ -49,7 +49,7 @@ function Result({ data }) {
           </div>
           <div className="search-result-meta">
             <span className="search-result-number">{data.patentNumber}</span>
-            <button className="icon-info" onClick={downloadFile}>
+            <button className="icon-button" onClick={downloadFile}>
               <FaFileDownload />
             </button>
             <button className="button-open" onClick={openModal}>OPEN</button>
@@ -59,7 +59,10 @@ function Result({ data }) {
           {truncateText(data.summary, 300)}
         </p>
         <div className="search-result-actions">
-          {/* Add any additional actions here as needed */}
+          <button className="search-result-action">DESCRIBE/COMPARE</button>
+          <button className="search-result-action">GOOGLE PATENT</button>
+          <button className="search-result-action">SAVE TO PROJECT</button>
+          <button className="search-result-action">USPTO</button>
         </div>
       </div>
 

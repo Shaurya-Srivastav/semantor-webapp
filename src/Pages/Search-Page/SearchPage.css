@@ -97,7 +97,7 @@ a {
 }
 
 .semantor-sidebar {
-  width: 20%;
+  width: 22%;
   font-size: 0.9rem;
   color: #4a4a4a;
 }
@@ -208,7 +208,7 @@ a {
 
 .semantor-main {
   flex-grow: 1;
-  padding-left: 50px;
+  padding-left: 5%;
 }
 
 .search-type-buttons {
@@ -263,6 +263,7 @@ a {
 .search-icon {
   color: #00b5ad;
   font-size: 1.5rem;
+  cursor: pointer;
 }
 
 .react-datepicker-wrapper,
@@ -297,3 +298,15 @@ a {
   background-color: #008c8a;
 }
 
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9); /* Light overlay so content is still slightly visible */
+  z-index: 100; /* Make sure it's above other content */
+}

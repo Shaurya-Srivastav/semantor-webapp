@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BeatLoader } from 'react-spinners';
 import axios from "axios";
 import "./SearchPage.css";
 import { FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -21,6 +22,8 @@ const Semantor = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     fetchHistory();
@@ -28,6 +31,7 @@ const Semantor = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading animation
     try {
       const response = await axios.post('http://129.213.131.75:5000/search', {
         input_idea: searchQuery,
@@ -38,6 +42,7 @@ const Semantor = () => {
     } catch (error) {
       alert("Search error: " + (error.response ? error.response.data.message : 'An error occurred'));
     }
+    setLoading(false); // Stop loading animation when search is complete
   };
   
   const saveSearchHistory = async (query, results) => {
@@ -100,6 +105,11 @@ const Semantor = () => {
 
   return (
     <div className="semantor-container">
+       {loading && (
+          <div className="loading-overlay">
+            <BeatLoader color="#00b5ad" loading={loading} />
+          </div>
+        )}
       <header className="semantor-header">
         <h1>SEMANTOR</h1>
         <div className="semantor-user-icons">
@@ -203,9 +213,11 @@ const Semantor = () => {
             />
             <FaSearch className="search-icon" onClick={handleSearch} />
           </div>
+          <br></br>
 
             {searchResults.map((result, index) => (
               <Result key={index} data={result} />
+              
             ))}
 
 
