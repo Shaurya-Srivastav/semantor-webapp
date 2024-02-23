@@ -33,8 +33,7 @@ const Semantor = () => {
         input_idea: searchQuery,
         user_input_date: startDate.toISOString().split('T')[0],
       });
-      setSearchResults(response.data['Granted results']); // Adjust based on your actual response structure
-      // Call saveSearchHistory function here
+      setSearchResults(response.data['Granted results']); 
       saveSearchHistory(searchQuery, response.data['Granted results']);
     } catch (error) {
       alert("Search error: " + (error.response ? error.response.data.message : 'An error occurred'));
@@ -42,7 +41,7 @@ const Semantor = () => {
   };
   
   const saveSearchHistory = async (query, results) => {
-    const token = localStorage.getItem('token'); // Retrieve the stored token
+    const token = localStorage.getItem('token'); 
     try {
       await axios.post('http://129.213.131.75:5000/save_search', {
         query,
@@ -52,7 +51,6 @@ const Semantor = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      // Optionally handle response, e.g., to confirm to the user that the search was saved
     } catch (error) {
       console.error("Save search history error:", error.response ? error.response.data : error);
     }
