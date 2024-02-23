@@ -33,11 +33,31 @@ const Semantor = () => {
         input_idea: searchQuery,
         user_input_date: startDate.toISOString().split('T')[0],
       });
-      setSearchResults(response.data['Granted results']); 
+      setSearchResults(response.data['Granted results']); // Adjust based on your actual response structure
+      // Call saveSearchHistory function here
+      saveSearchHistory(searchQuery, response.data['Granted results']);
     } catch (error) {
       alert("Search error: " + (error.response ? error.response.data.message : 'An error occurred'));
     }
   };
+  
+  const saveSearchHistory = async (query, results) => {
+    const token = localStorage.getItem('token'); // Retrieve the stored token
+    try {
+      await axios.post('http://129.213.131.75:5000/save_search', {
+        query,
+        results,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      // Optionally handle response, e.g., to confirm to the user that the search was saved
+    } catch (error) {
+      console.error("Save search history error:", error.response ? error.response.data : error);
+    }
+  };
+  
 
   const fetchHistory = async () => {
     try {
@@ -125,7 +145,7 @@ const Semantor = () => {
                 </div>
               ))
             ) : (
-              <div className="history-item">No history found.</div>
+              <div className="history-item">No search history found.</div>
             )}
           </SidebarDropdown>
         </aside>
