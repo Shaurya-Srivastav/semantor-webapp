@@ -1,10 +1,9 @@
-@import 'react-datepicker/dist/react-datepicker.css';
+@import "react-datepicker/dist/react-datepicker.css";
 
 a {
   text-decoration: none;
   color: black;
 }
-
 
 .line {
   width: 50%;
@@ -12,21 +11,18 @@ a {
   background-color: black;
 }
 
-
 .red {
   background-color: red;
   color: white;
 }
 
-
 .semantor-container {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, sans-serif;
   max-width: 90%;
   margin: 0 auto;
   color: #333;
   padding: 20px;
 }
-
 
 .semantor-header {
   display: flex;
@@ -53,7 +49,6 @@ a {
   margin: 0 10px;
   color: #333;
 }
-
 
 .semantor-nav {
   display: flex;
@@ -90,7 +85,6 @@ a {
   border-radius: 20%;
 }
 
-
 .semantor-body {
   display: flex;
   margin-top: 20px;
@@ -101,7 +95,6 @@ a {
   font-size: 0.9rem;
   color: #4a4a4a;
 }
-
 
 .sidebar-item,
 .sidebar-action {
@@ -175,7 +168,7 @@ a {
 }
 
 .dropdown-content input[type="checkbox"]:checked:before {
-  content: '';
+  content: "";
   width: 16px;
   height: 16px;
   border-radius: 2px;
@@ -307,6 +300,11 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.9); /* Light overlay so content is still slightly visible */
-  z-index: 100; /* Make sure it's above other content */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.9
+  );
+  z-index: 100;
 }

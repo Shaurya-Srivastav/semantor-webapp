@@ -30,7 +30,7 @@
     margin-right: 8px;
   }
 
-/* YourStylesheet.css */
+
 .icon-button {
   font-size: 1.5em;
   color: #00b5ad;
@@ -44,12 +44,12 @@
 }
 
 .icon-button:hover {
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Drop shadow effect */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
-/* Overriding the color for the Font Awesome icon specifically, if needed */
+
 .icon-button .fa {
-  color: inherit; /* This ensures the icon inherits the button's text color */
+  color: inherit;
 }
 
   
@@ -185,15 +185,15 @@
     z-index: 1000;
     width: 80%;
     max-width: 600px;
-    max-height: 80vh; /* Limit the height of the modal */
-    overflow-y: auto; /* Add scroll to the modal if content exceeds its max-height */
+    max-height: 80vh;
+    overflow-y: auto;
     border-radius: 10px;
     font-family: 'Poppins', sans-serif;
   }
   
   .modal-content {
-    max-height: 70vh; /* Optional: You can also limit the height of the content within the modal */
-    overflow-y: auto; /* This will add a scrollbar to the content if it exceeds max-height */
+    max-height: 70vh;
+    overflow-y: auto;
   }
   
   .overlay {

@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { BeatLoader } from 'react-spinners';
+import { BeatLoader } from "react-spinners";
 import axios from "axios";
 import "./SearchPage.css";
-import { FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import {
+  FaUser,
+  FaHeart,
+  FaCalendarAlt,
+  FaSearch,
+  FaChevronDown,
+  FaChevronUp,
+} from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import PaginationControls from "../../Components/common/Pagination/PaginationControls";
 import Result from "../../Components/common/Result/Result";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 const Semantor = () => {
   const [activeTabs, setActiveTabs] = useState([]);
@@ -24,7 +31,6 @@ const Semantor = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
     fetchHistory();
   }, []);
@@ -33,43 +39,55 @@ const Semantor = () => {
     e.preventDefault();
     setLoading(true); // Start loading animation
     try {
-      const response = await axios.post('http://129.213.131.75:5000/search', {
+      const response = await axios.post("http://129.213.131.75:5000/search", {
         input_idea: searchQuery,
-        user_input_date: startDate.toISOString().split('T')[0],
+        user_input_date: startDate.toISOString().split("T")[0],
       });
-      setSearchResults(response.data['Granted results']); 
-      saveSearchHistory(searchQuery, response.data['Granted results']);
+      setSearchResults(response.data["Granted results"]);
+      saveSearchHistory(searchQuery, response.data["Granted results"]);
     } catch (error) {
-      alert("Search error: " + (error.response ? error.response.data.message : 'An error occurred'));
+      alert(
+        "Search error: " +
+          (error.response ? error.response.data.message : "An error occurred")
+      );
     }
     setLoading(false); // Stop loading animation when search is complete
   };
-  
+
   const saveSearchHistory = async (query, results) => {
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem("token");
     try {
-      await axios.post('http://129.213.131.75:5000/save_search', {
-        query,
-        results,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      await axios.post(
+        "http://129.213.131.75:5000/save_search",
+        {
+          query,
+          results,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
     } catch (error) {
-      console.error("Save search history error:", error.response ? error.response.data : error);
+      console.error(
+        "Save search history error:",
+        error.response ? error.response.data : error
+      );
     }
   };
-  
 
   const fetchHistory = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://129.213.131.75:5000/get_search_history', {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://129.213.131.75:5000/get_search_history",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
       setHistory(response.data);
     } catch (error) {
       console.error("History fetch error:", error);
@@ -86,7 +104,11 @@ const Semantor = () => {
   };
 
   const toggleTab = (tab) => {
-    setActiveTabs(activeTabs.includes(tab) ? activeTabs.filter((t) => t !== tab) : [...activeTabs, tab]);
+    setActiveTabs(
+      activeTabs.includes(tab)
+        ? activeTabs.filter((t) => t !== tab)
+        : [...activeTabs, tab]
+    );
   };
 
   const toggleDropdown = (dropdown) => {
@@ -95,7 +117,10 @@ const Semantor = () => {
 
   const SidebarDropdown = ({ title, children, dropdownId }) => (
     <div className="sidebar-dropdown">
-      <div className="sidebar-action" onClick={() => toggleDropdown(dropdownId)}>
+      <div
+        className="sidebar-action"
+        onClick={() => toggleDropdown(dropdownId)}
+      >
         {title}
         {isOpen[dropdownId] ? <FaChevronUp /> : <FaChevronDown />}
       </div>
@@ -105,11 +130,11 @@ const Semantor = () => {
 
   return (
     <div className="semantor-container">
-       {loading && (
-          <div className="loading-overlay">
-            <BeatLoader color="#00b5ad" loading={loading} />
-          </div>
-        )}
+      {loading && (
+        <div className="loading-overlay">
+          <BeatLoader color="#00b5ad" loading={loading} />
+        </div>
+      )}
       <header className="semantor-header">
         <h1>SEMANTOR</h1>
         <div className="semantor-user-icons">
@@ -120,9 +145,13 @@ const Semantor = () => {
 
       <div className="semantor-body">
         <aside className="semantor-sidebar">
-          <div className="sidebar-item"><a href="/project">Your Projects</a></div>
+          <div className="sidebar-item">
+            <a href="/project">Your Projects</a>
+          </div>
           <br></br>
-          <div className="sidebar-item"><a href="/history">Your history</a></div>
+          <div className="sidebar-item">
+            <a href="/history">Your history</a>
+          </div>
           <br />
           <div className="line"></div>
           <br />
@@ -141,15 +170,19 @@ const Semantor = () => {
             <label>
               <input type="checkbox" /> Pregranted
             </label>
-            { }
-            <button type="button" className="filter-submit-button">Apply Filters</button>
+            {}
+            <button type="button" className="filter-submit-button">
+              Apply Filters
+            </button>
           </SidebarDropdown>
           <SidebarDropdown title="+ History" dropdownId="history">
             {history.length > 0 ? (
               history.map((item, index) => (
                 <div key={index} className="history-item">
                   <span className="history-item-name">{item.query}</span>
-                  <span className="history-item-date">{new Date(item.timestamp).toLocaleDateString()}</span>
+                  <span className="history-item-date">
+                    {new Date(item.timestamp).toLocaleDateString()}
+                  </span>
                 </div>
               ))
             ) : (
@@ -163,7 +196,9 @@ const Semantor = () => {
             {["abstract", "detail", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
-                className={`nav-button ${activeTabs.includes(tab) ? "active" : ""}`}
+                className={`nav-button ${
+                  activeTabs.includes(tab) ? "active" : ""
+                }`}
                 onClick={() => toggleTab(tab)}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -171,19 +206,20 @@ const Semantor = () => {
             ))}
           </nav>
 
-
-
-
           <div className="search-section">
             <div className="search-type-buttons">
               <button
-                className={`search-type-button ${searchType === "semantic" ? "active" : ""}`}
+                className={`search-type-button ${
+                  searchType === "semantic" ? "active" : ""
+                }`}
                 onClick={() => setSearchType("semantic")}
               >
                 Semantic
               </button>
               <button
-                className={`search-type-button ${searchType === "keyword" ? "active" : ""}`}
+                className={`search-type-button ${
+                  searchType === "keyword" ? "active" : ""
+                }`}
                 onClick={() => setSearchType("keyword")}
               >
                 Keyword
@@ -191,40 +227,39 @@ const Semantor = () => {
             </div>
 
             <div className="search-input">
-            <FaCalendarAlt className="calendar-icon" onClick={() => setIsCalendarOpen(!isCalendarOpen)} />
-            {isCalendarOpen && (
-              <DatePicker
-                selected={startDate}
-                onChange={onChange}
-                onClickOutside={() => setIsCalendarOpen(false)}
-                open={isCalendarOpen}
-                dropdownMode="select"
-                withPortal
-                startDate={startDate}
-                endDate={endDate}
-                selectsRange
+              <FaCalendarAlt
+                className="calendar-icon"
+                onClick={() => setIsCalendarOpen(!isCalendarOpen)}
               />
-            )}
-            <input
-              type="text"
-              placeholder="Semantic / Keyword Search:"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <FaSearch className="search-icon" onClick={handleSearch} />
-          </div>
-          <br></br>
+              {isCalendarOpen && (
+                <DatePicker
+                  selected={startDate}
+                  onChange={onChange}
+                  onClickOutside={() => setIsCalendarOpen(false)}
+                  open={isCalendarOpen}
+                  dropdownMode="select"
+                  withPortal
+                  startDate={startDate}
+                  endDate={endDate}
+                  selectsRange
+                />
+              )}
+              <input
+                type="text"
+                placeholder="Semantic / Keyword Search:"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <FaSearch className="search-icon" onClick={handleSearch} />
+            </div>
+            <br></br>
 
             {searchResults.map((result, index) => (
               <Result key={index} data={result} />
-              
             ))}
 
-
             <PaginationControls></PaginationControls>
-
           </div>
-
         </main>
       </div>
     </div>

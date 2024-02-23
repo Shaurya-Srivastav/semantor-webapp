@@ -47,3 +47,38 @@
     background-color: #0090a8; 
   }
   
+  .sidebar-project-item {
+    background-color: #f0f0f0; /* A light grey that should contrast nicely with the theme */
+    border-left: 4px solid #00b5ad; /* Theme color for the site */
+    margin: 10px 0;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  
+  .sidebar-project-item:hover {
+    background-color: #e0e0e0; /* Slightly darker on hover for an interactive effect */
+    transform: translateX(5px); /* A subtle movement to indicate interactivity */
+  }
+
+  .back-button {
+    display: block;
+    background-color: #00b5ad; /* Theme color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 10px;
+  }
+  
+  .sidebar-title {
+    font-size: 1.5em;
+    color: #333; /* Adjust color as needed */
+    padding: 10px 0;
+    border-bottom: 1px solid #eaeaea; /* Light border for separation */
+    margin-bottom: 10px;
+  }
