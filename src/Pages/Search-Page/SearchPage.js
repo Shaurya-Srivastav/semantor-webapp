@@ -1,38 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./SearchPage.css";
 import { FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import DatePicker from "react-datepicker";
-import Modal from 'react-modal';
 import "react-datepicker/dist/react-datepicker.css";
 import PaginationControls from "../../Components/common/Pagination/PaginationControls";
 import Result from "../../Components/common/Result/Result";
-
+import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
-
 
 const Semantor = () => {
   const [activeTabs, setActiveTabs] = useState([]);
   const [searchType, setSearchType] = useState("semantic");
   const [isOpen, setIsOpen] = useState({ filters: false, history: false });
-
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [liked, setLiked] = useState(false);
 
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
-
-  const openModal = () => {
-    setModalIsOpen(true);
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://129.213.131.75:5000/search', {
+        input_idea: searchQuery,
+        user_input_date: startDate.toISOString().split('T')[0],
+      });
+      setSearchResults(response.data['Granted results']); 
+    } catch (error) {
+      alert("Search error: " + (error.response ? error.response.data.message : 'An error occurred'));
+    }
   };
 
-
-  const closeModal = () => {
-    setModalIsOpen(false);
+  const fetchHistory = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://129.213.131.75:5000/get_search_history', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setHistory(response.data);
+    } catch (error) {
+      console.error("History fetch error:", error);
+    }
   };
 
+  const openModal = () => setModalIsOpen(true);
+  const closeModal = () => setModalIsOpen(false);
 
   const onChange = (dates) => {
     const [start, end] = dates;
@@ -40,11 +62,9 @@ const Semantor = () => {
     setEndDate(end);
   };
 
-
   const toggleTab = (tab) => {
     setActiveTabs(activeTabs.includes(tab) ? activeTabs.filter((t) => t !== tab) : [...activeTabs, tab]);
   };
-
 
   const toggleDropdown = (dropdown) => {
     setIsOpen({ ...isOpen, [dropdown]: !isOpen[dropdown] });
@@ -59,38 +79,6 @@ const Semantor = () => {
       {isOpen[dropdownId] && <div className="dropdown-content">{children}</div>}
     </div>
   );
-
-
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeAnimation, setLikeAnimation] = useState('');
-
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-
-
-    setLikeAnimation('like-animation');
-
-
-    setTimeout(() => {
-      setLikeAnimation('');
-    }, 600);
-  };
-
-  function truncateText(text, wordLimit) {
-    const words = text.split(' ');
-    if (words.length > wordLimit) {
-      return words.slice(0, wordLimit).join(' ') + '...';
-    }
-    return text;
-  }
-
-  const downloadFile = () => {
-
-    console.log('Download button clicked');
-
-  };
-
-
 
   return (
     <div className="semantor-container">
@@ -129,10 +117,16 @@ const Semantor = () => {
             <button type="button" className="filter-submit-button">Apply Filters</button>
           </SidebarDropdown>
           <SidebarDropdown title="+ History" dropdownId="history">
-            <div className="history-item">
-              <span className="history-item-name">Semantor</span>
-              <span className="history-item-date">12/31/2024</span>
-            </div>
+            {history.length > 0 ? (
+              history.map((item, index) => (
+                <div key={index} className="history-item">
+                  <span className="history-item-name">{item.query}</span>
+                  <span className="history-item-date">{new Date(item.timestamp).toLocaleDateString()}</span>
+                </div>
+              ))
+            ) : (
+              <div className="history-item">No history found.</div>
+            )}
           </SidebarDropdown>
         </aside>
 
@@ -168,33 +162,33 @@ const Semantor = () => {
               </button>
             </div>
 
-
-
-
-
             <div className="search-input">
-              <FaCalendarAlt className="calendar-icon" onClick={() => setIsCalendarOpen(!isCalendarOpen)} />
-              {isCalendarOpen && (
-                <DatePicker
-                  selected={startDate}
-                  onChange={onChange}
-                  onClickOutside={() => setIsCalendarOpen(false)}
-                  open={isCalendarOpen}
-                  dropdownMode="select"
-                  withPortal
-                  startDate={startDate}
-                  endDate={endDate}
-                  selectsRange
-                />
-              )}
-              <input type="text" placeholder="Semantic / Keyword Search:" />
-              <FaSearch className="search-icon" />
-            </div>
-            <br></br>
-            <br></br>
+            <FaCalendarAlt className="calendar-icon" onClick={() => setIsCalendarOpen(!isCalendarOpen)} />
+            {isCalendarOpen && (
+              <DatePicker
+                selected={startDate}
+                onChange={onChange}
+                onClickOutside={() => setIsCalendarOpen(false)}
+                open={isCalendarOpen}
+                dropdownMode="select"
+                withPortal
+                startDate={startDate}
+                endDate={endDate}
+                selectsRange
+              />
+            )}
+            <input
+              type="text"
+              placeholder="Semantic / Keyword Search:"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <FaSearch className="search-icon" onClick={handleSearch} />
+          </div>
 
-        
-            <Result></Result>
+            {searchResults.map((result, index) => (
+              <Result key={index} data={result} />
+            ))}
 
 
             <PaginationControls></PaginationControls>
