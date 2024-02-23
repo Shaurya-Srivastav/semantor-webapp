@@ -1,84 +1,83 @@
 .result-box {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    grid-gap: 20px; 
-    margin: 20px; 
-  }
-  
-  .card {
-    background-color: #fff; 
-    border-left: 5px solid #00b4db; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-    padding: 16px; 
-    transition: all 0.3s ease; 
-    font-family: 'Arial', sans-serif; 
-  }
-  
-  .card-header {
-    font-size: 1.1em; 
-    color: #333; 
-    font-weight: bold; 
-    margin-bottom: 8px; 
-  }
-  
-  .card-content {
-    font-size: 0.9em; 
-    color: #666; 
-    line-height: 1.4; 
-  }
-  
-  .card:hover {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
-    transform: translateY(-3px); 
-  }
-  
-  
-  .card button {
-    background-color: #00b4db; 
-    color: #fff; 
-    border: none; 
-    padding: 8px 16px; 
-    border-radius: 4px; 
-    cursor: pointer; 
-    transition: background-color 0.3s ease; 
-  }
-  
-  .card button:hover {
-    background-color: #0090a8; 
-  }
-  
-  .sidebar-project-item {
-    background-color: #f0f0f0; /* A light grey that should contrast nicely with the theme */
-    border-left: 4px solid #00b5ad; /* Theme color for the site */
-    margin: 10px 0;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s, transform 0.2s;
-  }
-  
-  .sidebar-project-item:hover {
-    background-color: #e0e0e0; /* Slightly darker on hover for an interactive effect */
-    transform: translateX(5px); /* A subtle movement to indicate interactivity */
-  }
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+  margin: 20px;
+}
 
-  .back-button {
-    display: block;
-    background-color: #00b5ad; /* Theme color */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px 0;
-    cursor: pointer;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 10px;
-  }
-  
-  .sidebar-title {
-    font-size: 1.5em;
-    color: #333; /* Adjust color as needed */
-    padding: 10px 0;
-    border-bottom: 1px solid #eaeaea; /* Light border for separation */
-    margin-bottom: 10px;
-  }
+.card {
+  background-color: #fff;
+  border-left: 5px solid #00b4db;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  transition: all 0.3s ease;
+  font-family: "Arial", sans-serif;
+}
+
+.card-header {
+  font-size: 1.1em;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.card-content {
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.4;
+}
+
+.card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+}
+
+.card button {
+  background-color: #00b4db;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card button:hover {
+  background-color: #0090a8;
+}
+
+.sidebar-project-item {
+  background-color: #f0f0f0;
+  border-left: 4px solid #00b5ad;
+  margin: 10px 0;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.sidebar-project-item:hover {
+  background-color: #e0e0e0;
+  transform: translateX(5px);
+}
+
+.back-button {
+  display: block;
+  background-color: #00b5ad;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px 0;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.sidebar-title {
+  font-size: 1.5em;
+  color: #333;
+  padding: 10px 0;
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 10px;
+}
