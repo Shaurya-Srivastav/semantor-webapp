@@ -37,22 +37,32 @@ const Semantor = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading animation
+    setLoading(true); 
+  
+    const endpoint = searchType === "semantic" 
+        ? "http://129.213.131.75:5000/search" 
+        : "http://129.213.131.75:5000/index-search";
+  
     try {
-      const response = await axios.post("http://129.213.131.75:5000/search", {
+      const response = await axios.post(endpoint, {
         input_idea: searchQuery,
         user_input_date: startDate.toISOString().split("T")[0],
+        selected_indexes: activeTabs.length > 0 ? activeTabs : ["description", "claims", "summary"],
       });
+  
       setSearchResults(response.data["Granted results"]);
       saveSearchHistory(searchQuery, response.data["Granted results"]);
+      fetchHistory();
     } catch (error) {
       alert(
         "Search error: " +
           (error.response ? error.response.data.message : "An error occurred")
       );
     }
-    setLoading(false); // Stop loading animation when search is complete
+    setLoading(false); 
   };
+  
+  
 
   const saveSearchHistory = async (query, results) => {
     const token = localStorage.getItem("token");
@@ -193,7 +203,7 @@ const Semantor = () => {
 
         <main className="semantor-main">
           <nav className="semantor-nav">
-            {["abstract", "detail", "claims", "summary"].map((tab) => (
+            {["description", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
                 className={`nav-button ${
