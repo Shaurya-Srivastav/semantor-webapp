@@ -8,7 +8,7 @@ import {
   FaCalendarAlt,
   FaSearch,
   FaChevronDown,
-  FaChevronUp,
+  FaChevronUp, FaChevronRight, FaChevronLeft
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,6 +30,11 @@ const Semantor = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   useEffect(() => {
     fetchHistory();
@@ -37,32 +42,32 @@ const Semantor = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    setLoading(true); 
-  
-    const endpoint = searchType === "semantic" 
-        ? "http://129.213.131.75:5000/search" 
-        : "http://129.213.131.75:5000/index-search";
-  
+    setLoading(true);
+
+    const endpoint = searchType === "semantic"
+      ? "http://129.213.131.75:5000/search"
+      : "http://129.213.131.75:5000/index-search";
+
     try {
       const response = await axios.post(endpoint, {
         input_idea: searchQuery,
         user_input_date: startDate.toISOString().split("T")[0],
         selected_indexes: activeTabs.length > 0 ? activeTabs : ["description", "claims", "summary"],
       });
-  
+
       setSearchResults(response.data["Granted results"]);
       saveSearchHistory(searchQuery, response.data["Granted results"]);
       fetchHistory();
     } catch (error) {
       alert(
         "Search error: " +
-          (error.response ? error.response.data.message : "An error occurred")
+        (error.response ? error.response.data.message : "An error occurred")
       );
     }
-    setLoading(false); 
+    setLoading(false);
   };
-  
-  
+
+
 
   const saveSearchHistory = async (query, results) => {
     const token = localStorage.getItem("token");
@@ -180,7 +185,7 @@ const Semantor = () => {
             <label>
               <input type="checkbox" /> Pregranted
             </label>
-            {}
+            { }
             <button type="button" className="filter-submit-button">
               Apply Filters
             </button>
@@ -206,9 +211,8 @@ const Semantor = () => {
             {["description", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
-                className={`nav-button ${
-                  activeTabs.includes(tab) ? "active" : ""
-                }`}
+                className={`nav-button ${activeTabs.includes(tab) ? "active" : ""
+                  }`}
                 onClick={() => toggleTab(tab)}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -219,17 +223,15 @@ const Semantor = () => {
           <div className="search-section">
             <div className="search-type-buttons">
               <button
-                className={`search-type-button ${
-                  searchType === "semantic" ? "active" : ""
-                }`}
+                className={`search-type-button ${searchType === "semantic" ? "active" : ""
+                  }`}
                 onClick={() => setSearchType("semantic")}
               >
                 Semantic
               </button>
               <button
-                className={`search-type-button ${
-                  searchType === "keyword" ? "active" : ""
-                }`}
+                className={`search-type-button ${searchType === "keyword" ? "active" : ""
+                  }`}
                 onClick={() => setSearchType("keyword")}
               >
                 Keyword
@@ -259,18 +261,68 @@ const Semantor = () => {
                 placeholder="Semantic / Keyword Search:"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch(e);
+                  }
+                }}
               />
               <FaSearch className="search-icon" onClick={handleSearch} />
             </div>
+
             <br></br>
 
             {searchResults.map((result, index) => (
               <Result key={index} data={result} />
             ))}
 
-            <PaginationControls></PaginationControls>
+            {searchResults && searchResults.length > 0 && (
+              <PaginationControls></PaginationControls>
+            )}
+
           </div>
         </main>
+
+
+        <aside className={`sidebar-right ${isSidebarOpen ? "open" : ""}`}>
+          <aside class="sidebar">
+            <section class="sidebar-section">
+              <h2 class="sidebar-title">Patent Assignee</h2>
+              <ul class="sidebar-list">
+                <li>Business Company</li>
+                <li>Business Company</li>
+                <li>Business Company</li>
+                <li class="sidebar-more">20 MORE...</li>
+              </ul>
+            </section>
+
+            <section class="sidebar-section">
+              <h2 class="sidebar-title">Patent Inventor</h2>
+              <ul class="sidebar-list">
+                <li>Business Company</li>
+                <li>Business Company</li>
+                <li>Business Company</li>
+                <li class="sidebar-more">20 MORE...</li>
+              </ul>
+            </section>
+
+            <section class="sidebar-section">
+              <h2 class="sidebar-title">Attorney Name</h2>
+              <ul class="sidebar-list">
+                <li>Business Company</li>
+                <li>Business Company</li>
+                <li>Business Company</li>
+                <li class="sidebar-more">20 MORE...</li>
+              </ul>
+            </section>
+          </aside>
+
+          <div className="toggle-icon" onClick={toggleSidebar}>
+            {isSidebarOpen ? <FaChevronRight /> : <FaChevronLeft />}
+          </div>
+        </aside>
+
+
       </div>
     </div>
   );

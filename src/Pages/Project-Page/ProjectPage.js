@@ -30,7 +30,7 @@ const Semantor = () => {
     setSelectedProject(null);
     setHasSelectedProject(false);
   };
-  
+
 
   return (
     <div className="semantor-container">
@@ -58,20 +58,20 @@ const Semantor = () => {
             Add Project
           </button>
 
-        {hasSelectedProject && (
-          <>
-            <button className="back-button" onClick={clearSelection}>
-              Back to all projects
-            </button>
-            <div className="sidebar-title">Projects</div>
-            {nonSelectedProjects.map(project => (
-              <div key={project.id} className="sidebar-project-item" onClick={() => handleCardClick(project)}>
-                {project.title}
-              </div>
-            ))}
-          </>
-        )}
-          
+          {hasSelectedProject && (
+            <>
+              <button className="back-button" onClick={clearSelection}>
+                Back to all projects
+              </button>
+              <div className="sidebar-title">Projects</div>
+              {nonSelectedProjects.map(project => (
+                <div key={project.id} className="sidebar-project-item" onClick={() => handleCardClick(project)}>
+                  {project.title}
+                </div>
+              ))}
+            </>
+          )}
+
 
         </aside>
 
@@ -82,17 +82,15 @@ const Semantor = () => {
               <div className="search-section">
                 <div className="search-type-buttons">
                   <button
-                    className={`search-type-button ${
-                      searchType === "semantic" ? "active" : ""
-                    }`}
+                    className={`search-type-button ${searchType === "semantic" ? "active" : ""
+                      }`}
                     onClick={() => setSearchType("semantic")}
                   >
                     Semantic
                   </button>
                   <button
-                    className={`search-type-button ${
-                      searchType === "keyword" ? "active" : ""
-                    }`}
+                    className={`search-type-button ${searchType === "keyword" ? "active" : ""
+                      }`}
                     onClick={() => setSearchType("keyword")}
                   >
                     Keyword
@@ -100,7 +98,11 @@ const Semantor = () => {
                 </div>
 
                 <div className="search-input">
-                  <input type="text" placeholder="Search...." />
+                  <input type="text" placeholder="Search...." onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      // handleSearch(e);
+                    }
+                  }} />
                   <FaSearch className="search-icon" />
                 </div>
                 {/* ...render the selected project's results here using result components... */}

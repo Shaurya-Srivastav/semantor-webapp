@@ -69,6 +69,7 @@ function Result({ data }) {
           <button className="search-result-action">GOOGLE PATENT</button>
           <button className="search-result-action">SAVE TO PROJECT</button>
           <button className="search-result-action">USPTO</button>
+          <button className="search-result-action">Highlight</button>
         </div>
       </div>
 

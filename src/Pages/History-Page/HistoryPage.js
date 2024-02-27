@@ -146,13 +146,17 @@ const Semantor = () => {
 
           <div className="search-section">
             <div className="search-input">
-              <input type="text" placeholder="Search...." />
+              <input type="text" placeholder="Search...." onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  // handleSearch(e);
+                }
+              }} />
               <FaSearch className="search-icon" />
             </div>
             <br></br>
             <br></br>
 
-           
+
             <Result></Result>
 
 

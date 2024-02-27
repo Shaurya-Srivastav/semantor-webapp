@@ -1,310 +1,113 @@
-@import "react-datepicker/dist/react-datepicker.css";
-
-a {
-  text-decoration: none;
-  color: black;
-}
-
-.line {
-  width: 50%;
-  height: 2px;
-  background-color: black;
-}
-
-.red {
-  background-color: red;
-  color: white;
-}
-
-.semantor-container {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  max-width: 90%;
-  margin: 0 auto;
-  color: #333;
-  padding: 20px;
-}
-
-.semantor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-}
-
-.semantor-header h1 {
-  font-size: 2rem;
-  color: #333;
+/* Reset default styles */
+body, html {
   margin: 0;
-  font-weight: bold;
+  padding: 0;
 }
 
-.semantor-user-icons {
-  display: flex;
-  align-items: center;
+/* Right Sidebar styles */
+.sidebar-right {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px; /* Width of the sidebar */
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%); /* Initially hide sidebar off screen */
+  /* rest of your styles */
 }
 
-.user-icon,
-.heart-icon {
-  font-size: 1.5rem;
-  margin: 0 10px;
-  color: #333;
+.sidebar-right.open {
+  transform: translateX(0); /* Bring sidebar onto the screen */
 }
 
-.semantor-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  background-color: #f8f8f8;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-}
-
-.nav-button {
-  background: none;
-  border: none;
-  flex-grow: 1;
+.toggle-icon {
+  position: absolute;
+  left: -80px; /* Adjust this value to position the icon to the left of the sidebar */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px; /* Increase the font size to make the icon bigger */
+  color: #FFFFFF; /* Assuming the icon itself is white */
+  background: #00b5ad; /* Your provided teal color */
+  border-radius: 50%;
+  width: 60px; /* Increase width for a larger icon */
+  height: 60px; /* Increase height for a larger icon */
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 0;
-  margin: 0 1px;
-  font-size: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional shadow for depth */
   cursor: pointer;
-  transition: all 0.3s ease;
-  outline: none;
-  color: #333;
-  font-weight: 500;
-  text-transform: capitalize;
+  z-index: 100; /* Ensure it's above other elements */
 }
 
-.nav-button:hover,
-.nav-button.active {
-  color: #fff;
-  background-color: #00b5ad;
-  border-radius: 20%;
+.toggle-icon:hover,
+.toggle-icon:focus {
+  background: #008c8a; /* The darker shade of teal for hover/focus feedback */
 }
 
-.semantor-body {
-  display: flex;
-  margin-top: 20px;
+/* Additional media queries to handle responsiveness */
+@media (max-width: 768px) {
+  .toggle-icon {
+    left: -30px; /* Adjust for smaller screens if necessary */
+    font-size: 24px; /* Slightly smaller icon for smaller screens */
+    width: 50px; /* Adjust width for smaller screens */
+    height: 50px; /* Adjust height for smaller screens */
+  }
 }
 
-.semantor-sidebar {
-  width: 22%;
-  font-size: 0.9rem;
-  color: #4a4a4a;
+
+
+.sidebar-right .sidebar-content {
+  z-index: 10;
+  /* rest of your styles */
 }
 
-.sidebar-item,
-.sidebar-action {
-  margin: 10px 0;
-  cursor: pointer;
-  font-weight: normal;
-  text-decoration: none;
-}
-
-.sidebar-dropdown {
-  margin-bottom: 20px;
-}
-
-.sidebar-action {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  color: #00b5ad;
-  font-weight: bold;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar-action:hover {
-  background-color: rgba(0, 181, 173, 0.1);
-}
-
-.dropdown-content {
-  display: flex;
-  flex-direction: column;
-  background: white;
-  border: 1px solid #e6e6e6;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  padding: 15px;
-  transition: all 0.3s ease-out;
-}
-
-.dropdown-content label {
-  display: block;
-  margin-bottom: 10px;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.dropdown-content input[type="date"] {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.dropdown-content input[type="checkbox"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: #fff;
-  margin: 0;
-  font: inherit;
-  color: #333;
-  width: 25px;
-  height: 25px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transform: translateY(-0.075em);
-  display: grid;
-  place-content: center;
-}
-
-.dropdown-content input[type="checkbox"]:checked:before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  border-radius: 2px;
-  background-color: #00b5ad;
-}
-
-.history-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #ddd;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.history-item-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 70%;
-}
-
-.history-item-date {
-  white-space: nowrap;
-}
-
-.history-item:last-child {
-  border-bottom: none;
-}
-
-.semantor-main {
-  flex-grow: 1;
-  padding-left: 5%;
-}
-
-.search-type-buttons {
-  display: flex;
-  padding: 10px;
-  margin-bottom: 10px;
-  width: auto;
-  justify-content: start;
-}
-
-.search-type-button {
-  background: none;
-  font-size: 1em;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  padding: 10px 20px;
-  margin-right: 10px;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.3s ease;
-}
-
-.search-type-button.active {
-  background-color: #00b5ad;
-  color: white;
-  border-color: #00b5ad;
-}
-
-.search-section {
-  display: flex;
-  flex-direction: column;
-}
-
-.search-input {
-  display: flex;
-  align-items: center;
-  background-color: #f2f2f2;
-  border-radius: 20px;
-  padding: 10px 20px;
-}
-
-.search-input input {
-  flex-grow: 1;
-  border: none;
-  background: none;
-  margin: 0 10px;
-  font-size: 1rem;
-  outline: none;
-}
-
-.calendar-icon,
-.search-icon {
-  color: #00b5ad;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.react-datepicker-wrapper,
-.react-datepicker__input-container {
-  display: block;
-}
-
-.search-input {
-  position: relative;
-}
-
-.calendar-icon {
-  cursor: pointer;
-}
-
-.filter-submit-button {
-  padding: 10px 15px;
-  margin-top: 15px;
-  background-color: #00b5ad;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: background-color 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.filter-submit-button:hover {
-  background-color: #008c8a;
-}
-
-.loading-overlay {
+.sidebar {
+  width: 250px; /* Adjust the width as necessary */
+  background-color: #dadada; /* Light gray background */
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
   bottom: 0;
+  right: 0;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.sidebar-section {
+  margin-bottom: 20px;
+  border-right: 3px solid #00b5ad;
+}
+
+.sidebar-title {
+  font-size: 16px;
+  color: #333; /* Dark gray */
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc; /* Light gray border */
+  padding-bottom: 5px;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-list li {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(
-    255,
-    255,
-    255,
-    0.9
-  );
-  z-index: 100;
+  align-items: center; /* Vertically center */
+  font-size: 14px;
+  color: #666; /* Medium gray */
+  margin-bottom: 5px;
+  height: 40px; /* Give a fixed height to align items */
+}
+
+.sidebar-more {
+  font-size: 14px;
+  color: #00b5ad; /* Teal color */
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: color 0.3s ease; /* Transition for smooth color change */
+}
+
+.sidebar-more:hover {
+  color: #008c8a; /* Darker teal on hover */
 }
