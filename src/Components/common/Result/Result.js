@@ -32,6 +32,29 @@ function Result({ data }) {
     // Implement file download functionality here
   };
 
+  function formatClaims(claimsText) {
+    // Split the claims into an array by the pipe character
+    const claimsArray = claimsText.split(' | ');
+
+    // Map over each claim and create a list item
+    return claimsArray.map((claim, index) => {
+      // Remove leading numbers and periods
+      claim = claim.replace(/^\d+\.\s*/, '');
+      // Replace multiple spaces with a single space
+      claim = claim.replace(/\s+/g, ' ');
+      // Trim whitespace
+      claim = claim.trim();
+      // Return the claim as a JSX list item
+      return (
+        <li key={index} style={{ marginBottom: '1em' }}>
+          <strong>Claim {index + 1}:</strong> {claim}
+        </li>
+      );
+    });
+  }
+
+  const claimsListItems = formatClaims(data.claims);
+
   return (
     <div>
       <div className="search-result">
@@ -91,10 +114,10 @@ function Result({ data }) {
           <hr />
           <h3>Abstract</h3>
           <p>{data.abstract}</p>
-          <h3>Detail</h3>
+          <h3>Detail Description</h3>
           <p>{data.detail}</p>
           <h3>Claims</h3>
-          <p>{data.claims}</p>
+          <ul>{claimsListItems}</ul>
           <h3>Summary</h3>
           <p>{data.summary}</p>
         </div>

@@ -183,8 +183,7 @@
     background-color: white;
     padding: 20px;
     z-index: 1000;
-    width: 80%;
-    max-width: 600px;
+    width: 85%;
     max-height: 80vh;
     overflow-y: auto;
     border-radius: 10px;
