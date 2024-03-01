@@ -53,7 +53,7 @@ const Semantor = () => {
 
     textArea.addEventListener('focus', autoResize, false);
     textArea.addEventListener('blur', resetSize, false);
-
+    
     function resetSize() {
       this.style.height = '40px'; // Set to default height of one line
     }
