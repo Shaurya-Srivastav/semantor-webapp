@@ -42,6 +42,31 @@ const Semantor = () => {
   const [isKeywordSearchActive, setIsKeywordSearchActive] = useState(false);
   const [keywordSearchQuery, setKeywordSearchQuery] = useState("");
 
+  useEffect(() => {
+    const textArea = document.querySelector('.search-input textarea');
+    textArea.addEventListener('input', autoResize, false);
+
+    function autoResize() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    }
+
+    textArea.addEventListener('focus', autoResize, false);
+    textArea.addEventListener('blur', resetSize, false);
+
+    function resetSize() {
+      this.style.height = '40px'; // Set to default height of one line
+    }
+    
+
+    // Clean up the event listeners when the component unmounts
+    return () => {
+      textArea.removeEventListener('input', autoResize, false);
+      textArea.removeEventListener('focus', autoResize, false);
+      textArea.removeEventListener('blur', resetSize, false);
+    };
+  }, []);
+
   const toggleKeywordSearch = () => {
     setIsKeywordSearchActive(!isKeywordSearchActive);
   };
@@ -96,7 +121,7 @@ const Semantor = () => {
     } catch (error) {
       alert(
         "Search error: " +
-          (error.response ? error.response.data.message : "An error occurred")
+        (error.response ? error.response.data.message : "An error occurred")
       );
     }
     setLoading(false);
@@ -218,7 +243,7 @@ const Semantor = () => {
             <label>
               <input type="checkbox" /> Pregranted
             </label>
-            {}
+            { }
             <button type="button" className="filter-submit-button">
               Apply Filters
             </button>
@@ -248,9 +273,8 @@ const Semantor = () => {
             {["abstract", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
-                className={`nav-button ${
-                  activeTabs.includes(tab) ? "active" : ""
-                }`}
+                className={`nav-button ${activeTabs.includes(tab) ? "active" : ""
+                  }`}
                 onClick={() => toggleTab(tab)}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -261,18 +285,16 @@ const Semantor = () => {
           <div className="search-section">
             <div className="search-type-buttons">
               <button
-                className={`search-type-button ${
-                  searchType === "semantic" ? "active" : ""
-                }`}
+                className={`search-type-button ${searchType === "semantic" ? "active" : ""
+                  }`}
                 onClick={() => setSearchType("semantic")}
               >
                 Semantic
               </button>
 
               <button
-                className={`search-type-button ${
-                  isKeywordSearchActive ? "active" : ""
-                }`}
+                className={`search-type-button ${isKeywordSearchActive ? "active" : ""
+                  }`}
                 onClick={toggleKeywordSearch}
               >
                 Keyword
@@ -297,13 +319,12 @@ const Semantor = () => {
                   selectsRange
                 />
               )}
-              <input
-                type="text"
+              <textarea
                 placeholder="Semantic Search:"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     handleSearch(e);
                   }
                 }}
