@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // Assuming you use axios for HTTP requests
 import "./HistoryPage.css";
 import { FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Modal from 'react-modal';
@@ -11,6 +12,10 @@ Modal.setAppElement('#root');
 
 
 const Semantor = () => {
+
+  const [currentPageMap, setCurrentPageMap] = useState({});
+  const itemsPerPage = 10;
+
   const [activeTabs, setActiveTabs] = useState([]);
   const [isOpen, setIsOpen] = useState({ filters: false, history: false });
 
@@ -19,7 +24,45 @@ const Semantor = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [liked, setLiked] = useState(false);
 
+  const [searchHistory, setSearchHistory] = useState([]);
 
+  
+
+  useEffect(() => {
+    fetchSearchHistory();
+  }, []);
+
+  const onPageChange = (historyItemId, newPage) => {
+    setCurrentPageMap(prev => ({ ...prev, [historyItemId]: newPage }));
+  };
+
+  const fetchSearchHistory = async () => {
+    try {
+      // Retrieve the token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.log("No token found"); // Or handle the lack of a token as needed
+        return;
+      }
+  
+      // Include the Authorization header with the token
+      const response = await axios.get("http://129.213.131.75:5000/get_search_history", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const parsedHistory = response.data.map(item => ({
+        ...item,
+        results: JSON.parse(item.results) // Parse the results string into an array
+      }));
+      setSearchHistory(parsedHistory);
+    } catch (error) {
+      console.error("Failed to fetch search history:", error);
+    }
+  };
+
+  fetchSearchHistory();
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -157,7 +200,28 @@ const Semantor = () => {
             <br></br>
 
 
-            <Result></Result>
+            {searchHistory.map((historyItem, index) => {
+        // Determine the current page for this history item
+        const currentPage = currentPageMap[historyItem.id] || 1;
+        const totalPages = Math.ceil(historyItem.results.length / itemsPerPage);
+
+        return (
+          <div key={historyItem.id}>
+            <h2>{historyItem.query}</h2>
+            {/* Paginate patents within this history item */}
+            {historyItem.results
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((result, idx) => (
+                <Result key={idx} data={result} />
+              ))}
+            <PaginationControls 
+              currentPage={currentPage} 
+              totalPages={totalPages} 
+              onPageChange={(newPage) => onPageChange(historyItem.id, newPage)}
+            />
+          </div>
+        );
+      })}
 
 
             <PaginationControls></PaginationControls>

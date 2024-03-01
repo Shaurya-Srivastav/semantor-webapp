@@ -3,12 +3,7 @@ import { BeatLoader } from "react-spinners";
 import axios from "axios";
 import "./SearchPage.css";
 import {
-  FaUser,
-  FaHeart,
-  FaCalendarAlt,
-  FaSearch,
-  FaChevronDown,
-  FaChevronUp, FaChevronRight, FaChevronLeft
+  FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp, FaChevronRight, FaChevronLeft
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -32,6 +27,27 @@ const Semantor = () => {
   const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; 
+
+  const [selectedHistoryResults, setSelectedHistoryResults] = useState([]);
+
+  const handleHistoryEntryClick = (historyEntryResults) => {
+    const resultsArray = typeof historyEntryResults === 'string'
+      ? JSON.parse(historyEntryResults)
+      : historyEntryResults;
+    setSelectedHistoryResults(resultsArray);
+    setCurrentPage(1);
+  };
+  
+
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const displayedResults = selectedHistoryResults.length > 0 ? selectedHistoryResults : searchResults;
+  const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -52,7 +68,7 @@ const Semantor = () => {
       const response = await axios.post(endpoint, {
         input_idea: searchQuery,
         user_input_date: startDate.toISOString().split("T")[0],
-        selected_indexes: activeTabs.length > 0 ? activeTabs : ["description", "claims", "summary"],
+        selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
       });
 
       setSearchResults(response.data["Granted results"]);
@@ -191,24 +207,24 @@ const Semantor = () => {
             </button>
           </SidebarDropdown>
           <SidebarDropdown title="+ History" dropdownId="history">
-            {history.length > 0 ? (
-              history.map((item, index) => (
-                <div key={index} className="history-item">
-                  <span className="history-item-name">{item.query}</span>
-                  <span className="history-item-date">
-                    {new Date(item.timestamp).toLocaleDateString()}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <div className="history-item">No search history found.</div>
-            )}
+          {history.length > 0 ? (
+    history.map((item, index) => (
+      <div key={index} className="history-item" onClick={() => handleHistoryEntryClick(item.results)}>
+        <span className="history-item-name">{item.query}</span>
+        <span className="history-item-date">
+          {new Date(item.timestamp).toLocaleDateString()}
+        </span>
+      </div>
+    ))
+  ) : (
+    <div className="history-item">No search history found.</div>
+  )}
           </SidebarDropdown>
         </aside>
 
         <main className="semantor-main">
           <nav className="semantor-nav">
-            {["description", "claims", "summary"].map((tab) => (
+            {["abstract", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
                 className={`nav-button ${activeTabs.includes(tab) ? "active" : ""
@@ -272,13 +288,17 @@ const Semantor = () => {
 
             <br></br>
 
-            {searchResults.map((result, index) => (
-              <Result key={index} data={result} />
-            ))}
+            {displayedResults
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map((result, index) => <Result key={index} data={result} />)}
 
-            {searchResults && searchResults.length > 0 && (
-              <PaginationControls></PaginationControls>
-            )}
+          {totalPages > 1 && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+            />
+          )}
 
           </div>
         </main>
