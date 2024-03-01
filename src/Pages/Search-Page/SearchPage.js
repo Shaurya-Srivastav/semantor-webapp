@@ -3,7 +3,14 @@ import { BeatLoader } from "react-spinners";
 import axios from "axios";
 import "./SearchPage.css";
 import {
-  FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp, FaChevronRight, FaChevronLeft
+  FaUser,
+  FaHeart,
+  FaCalendarAlt,
+  FaSearch,
+  FaChevronDown,
+  FaChevronUp,
+  FaChevronRight,
+  FaChevronLeft,
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -28,24 +35,32 @@ const Semantor = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; 
+  const itemsPerPage = 10;
 
   const [selectedHistoryResults, setSelectedHistoryResults] = useState([]);
 
+  const [isKeywordSearchActive, setIsKeywordSearchActive] = useState(false);
+  const [keywordSearchQuery, setKeywordSearchQuery] = useState("");
+
+  const toggleKeywordSearch = () => {
+    setIsKeywordSearchActive(!isKeywordSearchActive);
+  };
+
   const handleHistoryEntryClick = (historyEntryResults) => {
-    const resultsArray = typeof historyEntryResults === 'string'
-      ? JSON.parse(historyEntryResults)
-      : historyEntryResults;
+    const resultsArray =
+      typeof historyEntryResults === "string"
+        ? JSON.parse(historyEntryResults)
+        : historyEntryResults;
     setSelectedHistoryResults(resultsArray);
     setCurrentPage(1);
   };
-  
 
   const onPageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const displayedResults = selectedHistoryResults.length > 0 ? selectedHistoryResults : searchResults;
+  const displayedResults =
+    selectedHistoryResults.length > 0 ? selectedHistoryResults : searchResults;
   const totalPages = Math.ceil(searchResults.length / itemsPerPage);
 
   const toggleSidebar = () => {
@@ -60,15 +75,19 @@ const Semantor = () => {
     e.preventDefault();
     setLoading(true);
 
-    const endpoint = searchType === "semantic"
-      ? "http://129.213.131.75:5000/search"
-      : "http://129.213.131.75:5000/index-search";
+    const endpoint =
+      searchType === "semantic"
+        ? "http://129.213.131.75:5000/search"
+        : "http://129.213.131.75:5000/index-search";
 
     try {
       const response = await axios.post(endpoint, {
         input_idea: searchQuery,
         user_input_date: startDate.toISOString().split("T")[0],
-        selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
+        selected_indexes:
+          activeTabs.length > 0
+            ? activeTabs
+            : ["abstract", "claims", "summary"],
       });
 
       setSearchResults(response.data["Granted results"]);
@@ -77,13 +96,11 @@ const Semantor = () => {
     } catch (error) {
       alert(
         "Search error: " +
-        (error.response ? error.response.data.message : "An error occurred")
+          (error.response ? error.response.data.message : "An error occurred")
       );
     }
     setLoading(false);
   };
-
-
 
   const saveSearchHistory = async (query, results) => {
     const token = localStorage.getItem("token");
@@ -201,24 +218,28 @@ const Semantor = () => {
             <label>
               <input type="checkbox" /> Pregranted
             </label>
-            { }
+            {}
             <button type="button" className="filter-submit-button">
               Apply Filters
             </button>
           </SidebarDropdown>
           <SidebarDropdown title="+ History" dropdownId="history">
-          {history.length > 0 ? (
-    history.map((item, index) => (
-      <div key={index} className="history-item" onClick={() => handleHistoryEntryClick(item.results)}>
-        <span className="history-item-name">{item.query}</span>
-        <span className="history-item-date">
-          {new Date(item.timestamp).toLocaleDateString()}
-        </span>
-      </div>
-    ))
-  ) : (
-    <div className="history-item">No search history found.</div>
-  )}
+            {history.length > 0 ? (
+              history.map((item, index) => (
+                <div
+                  key={index}
+                  className="history-item"
+                  onClick={() => handleHistoryEntryClick(item.results)}
+                >
+                  <span className="history-item-name">{item.query}</span>
+                  <span className="history-item-date">
+                    {new Date(item.timestamp).toLocaleDateString()}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className="history-item">No search history found.</div>
+            )}
           </SidebarDropdown>
         </aside>
 
@@ -227,8 +248,9 @@ const Semantor = () => {
             {["abstract", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
-                className={`nav-button ${activeTabs.includes(tab) ? "active" : ""
-                  }`}
+                className={`nav-button ${
+                  activeTabs.includes(tab) ? "active" : ""
+                }`}
                 onClick={() => toggleTab(tab)}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -239,16 +261,19 @@ const Semantor = () => {
           <div className="search-section">
             <div className="search-type-buttons">
               <button
-                className={`search-type-button ${searchType === "semantic" ? "active" : ""
-                  }`}
+                className={`search-type-button ${
+                  searchType === "semantic" ? "active" : ""
+                }`}
                 onClick={() => setSearchType("semantic")}
               >
                 Semantic
               </button>
+
               <button
-                className={`search-type-button ${searchType === "keyword" ? "active" : ""
-                  }`}
-                onClick={() => setSearchType("keyword")}
+                className={`search-type-button ${
+                  isKeywordSearchActive ? "active" : ""
+                }`}
+                onClick={toggleKeywordSearch}
               >
                 Keyword
               </button>
@@ -274,35 +299,55 @@ const Semantor = () => {
               )}
               <input
                 type="text"
-                placeholder="Semantic / Keyword Search:"
+                placeholder="Semantic Search:"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     handleSearch(e);
                   }
                 }}
               />
               <FaSearch className="search-icon" onClick={handleSearch} />
             </div>
+            <br></br>
+            <br></br>
+            {isKeywordSearchActive && (
+              <div className="search-input">
+                <input
+                  type="text"
+                  placeholder="Enter Specific Keywords: "
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch(e);
+                    }
+                  }}
+                />
+              </div>
+            )}
 
             <br></br>
 
             {displayedResults
-            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-            .map((result, index) => <Result key={index} data={result} />)}
+              .slice(
+                (currentPage - 1) * itemsPerPage,
+                currentPage * itemsPerPage
+              )
+              .map((result, index) => (
+                <Result key={index} data={result} />
+              ))}
 
-          {totalPages > 1 && (
-            <PaginationControls
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-            />
-          )}
-
+            {totalPages > 1 && (
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            )}
           </div>
         </main>
-
 
         <aside className={`sidebar-right ${isSidebarOpen ? "open" : ""}`}>
           <aside class="sidebar">
@@ -341,8 +386,6 @@ const Semantor = () => {
             {isSidebarOpen ? <FaChevronRight /> : <FaChevronLeft />}
           </div>
         </aside>
-
-
       </div>
     </div>
   );

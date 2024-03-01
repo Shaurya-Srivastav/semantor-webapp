@@ -250,6 +250,22 @@
     background-color: #00796b;
     transform: translateY(-2px);
   }
+
+  .modal-content{
+    width: 60%;
+    height: 60%;
+    border: 2px solid #00b5ad;
+    margin: auto;
+    overflow: 'auto';
+    border-radius: 25%;
+  }
+  
+ 
+  h1 {
+    color: #00b5ad;
+    margin-bottom: 0.5em;
+  }
+  
   
   @keyframes likeAnimation {
   

@@ -7,6 +7,12 @@ function Result({ data }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
+  const openCompareModal = () => {
+    setIsCompareModalOpen(true);
+  };
+
   const openModal = () => {
     setModalIsOpen(true);
   };
@@ -22,7 +28,9 @@ function Result({ data }) {
   function truncateText(text, wordLimit) {
     if (!text) return ""; // Ensure text is not null or undefined
     const words = text.split(" ");
-    return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + "..." : text;
+    return words.length > wordLimit
+      ? words.slice(0, wordLimit).join(" ") + "..."
+      : text;
   }
 
   const downloadFile = () => {
@@ -31,16 +39,19 @@ function Result({ data }) {
   };
 
   const openGooglePatent = (patentId) => {
-    const url = `https://patents.google.com/patent/US${patentId}/en`;;
-    window.open(url, '_blank');
+    const url = `https://patents.google.com/patent/US${patentId}/en`;
+    window.open(url, "_blank");
   };
 
   function formatClaims(claimsText) {
     if (!claimsText) return []; // Ensure claimsText is not null or undefined
-    const claimsArray = claimsText.split(' | ').map((claim, index) => {
-      claim = claim.replace(/^\d+\.\s*/, '').replace(/\s+/g, ' ').trim();
+    const claimsArray = claimsText.split(" | ").map((claim, index) => {
+      claim = claim
+        .replace(/^\d+\.\s*/, "")
+        .replace(/\s+/g, " ")
+        .trim();
       return (
-        <li key={index} style={{ marginBottom: '1em' }}>
+        <li key={index} style={{ marginBottom: "1em" }}>
           <strong>Claim {index + 1}:</strong> {claim}
         </li>
       );
@@ -55,7 +66,11 @@ function Result({ data }) {
       <div className="search-result">
         <div className="search-result-header">
           <button className="icon-heart-button" onClick={toggleLike}>
-            {isLiked ? <FaHeart className="icon-heart liked" /> : <FaRegHeart className="icon-heart" />}
+            {isLiked ? (
+              <FaHeart className="icon-heart liked" />
+            ) : (
+              <FaRegHeart className="icon-heart" />
+            )}
           </button>
           <div className="search-result-title-section">
             <h3 className="search-result-title">{data.title}</h3>
@@ -65,26 +80,63 @@ function Result({ data }) {
             <button className="icon-button" onClick={downloadFile}>
               <FaFileDownload />
             </button>
-            <button className="button-open" onClick={openModal}>OPEN</button>
+            <button className="button-open" onClick={openModal}>
+              OPEN
+            </button>
           </div>
         </div>
         <p className="search-result-description">{data.summary}</p>
         <div className="search-result-actions">
-          <button className="search-result-action">DESCRIBE/COMPARE</button>
-          <button 
-          className="search-result-action" 
-          onClick={() => openGooglePatent(data.patent_id)}
-        >GOOGLE PATENT</button>
+          <button className="search-result-action" onClick={openCompareModal}>
+            DESCRIBE/COMPARE
+          </button>
+          <button
+            className="search-result-action"
+            onClick={() => openGooglePatent(data.patent_id)}
+          >
+            GOOGLE PATENT
+          </button>
           <button className="search-result-action">SAVE TO PROJECT</button>
           <button className="search-result-action">USPTO</button>
           <button className="search-result-action">Highlight</button>
         </div>
       </div>
 
-      <Modal isOpen={modalIsOpen} onRequestClose={closeModal} contentLabel="Detail Modal" className="modal" overlayClassName="overlay">
+      <Modal
+        isOpen={isCompareModalOpen}
+        onRequestClose={() => setIsCompareModalOpen(false)}
+        style={{
+          content: {
+            maxWidth: "60%",
+            maxHeight: "60%",
+            margin: "auto",
+            border: "2px solid #00b5ad",
+            overflow: "auto",
+          },
+        }}
+      >
+        <h2>Comparison</h2>
+        <h1>User Idea:</h1>
+        <p id="user-idea-content"></p> {/* Empty paragraph for content */}
+        <h1>Patent Abstract:</h1>
+        <p id="patent-abstract-content"></p> {/* Empty paragraph for content */}
+        <h1>Results:</h1>
+        <p id="results-content"></p> {/* Empty paragraph for content */}
+        {/* Rest of your modal content */}
+      </Modal>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Detail Modal"
+        className="modal"
+        overlayClassName="overlay"
+      >
         <h2>{data.title}</h2>
         <div className="modal-content">
-          <button onClick={downloadFile} className="download-button">Download File</button>
+          <button onClick={downloadFile} className="download-button">
+            Download File
+          </button>
           <hr />
           {data.abstract && (
             <div>
@@ -106,7 +158,9 @@ function Result({ data }) {
           )}
         </div>
         <div className="modal-footer">
-          <button onClick={closeModal} className="close-button">Close</button>
+          <button onClick={closeModal} className="close-button">
+            Close
+          </button>
         </div>
       </Modal>
     </div>
