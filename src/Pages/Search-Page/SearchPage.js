@@ -22,7 +22,13 @@ Modal.setAppElement("#root");
 
 const Semantor = () => {
   const [activeTabs, setActiveTabs] = useState([]);
-  const [searchType, setSearchType] = useState("semantic");
+  const [semanticQuery, setSemanticQuery] = useState("");
+  const [indexSearchQuery, setIndexSearchQuery] = useState("");
+  const [searchActive, setSearchActive] = useState({
+    semantic: true,
+    keyword: false,
+  });
+
   const [isOpen, setIsOpen] = useState({ filters: false, history: false });
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -66,8 +72,19 @@ const Semantor = () => {
     };
   }, []);
 
+  const toggleSemanticSearch = () => {
+    setSearchActive({ semantic: true, keyword: false });
+  };
+
+  const toggleSearchType = (type) => {
+    setSearchActive((prev) => ({ ...prev, [type]: !prev[type] }));
+  };
+
   const toggleKeywordSearch = () => {
-    setIsKeywordSearchActive(!isKeywordSearchActive);
+    setSearchActive((prevState) => ({
+      ...prevState,
+      keyword: !prevState.keyword,
+    }));
   };
 
   const handleHistoryEntryClick = (historyEntryResults) => {
@@ -95,36 +112,53 @@ const Semantor = () => {
     fetchHistory();
   }, []);
 
+  
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const endpoint =
-      searchType === "semantic"
-        ? "http://129.213.131.75:5000/search"
-        : "http://129.213.131.75:5000/index-search";
+    let endpoint, requestData;
+
+    if (searchActive.semantic && !searchActive.keyword) {
+        // Only semantic search is active
+        endpoint = "http://129.213.131.75:5000/search";
+        requestData = {
+            input_idea: semanticQuery,
+            user_input_date: startDate.toISOString().split("T")[0],
+            selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
+        };
+    } else if (searchActive.semantic && searchActive.keyword) {
+        // Both semantic and keyword searches are active
+        endpoint = "http://129.213.131.75:5000/combined-search";
+        requestData = {
+            input_idea: semanticQuery,
+            input_index: indexSearchQuery,
+            user_input_date: startDate.toISOString().split("T")[0],
+            selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
+        };
+    } else {
+        // If no valid search type is active, possibly due to a UI logic error
+        console.error("No valid search type selected.");
+        setLoading(false);
+        return; // Stop execution
+    }
 
     try {
-      const response = await axios.post(endpoint, {
-        input_idea: searchQuery,
-        user_input_date: startDate.toISOString().split("T")[0],
-        selected_indexes:
-          activeTabs.length > 0
-            ? activeTabs
-            : ["abstract", "claims", "summary"],
-      });
-
-      setSearchResults(response.data["Granted results"]);
-      saveSearchHistory(searchQuery, response.data["Granted results"]);
-      fetchHistory();
+        const response = await axios.post(endpoint, requestData);
+        console.log(response.data["Granted results"]);
+        setSearchResults(response.data["Granted results"]);
+        saveSearchHistory(semanticQuery, response.data["Granted results"]);
+        fetchHistory();
     } catch (error) {
-      alert(
-        "Search error: " +
-          (error.response ? error.response.data.message : "An error occurred")
-      );
+        alert(
+            "Search error: " +
+            (error.response ? error.response.data.message : "An error occurred")
+        );
+    } finally {
+        setLoading(false);
     }
-    setLoading(false);
-  };
+};
+
 
   const saveSearchHistory = async (query, results) => {
     const token = localStorage.getItem("token");
@@ -292,53 +326,75 @@ const Semantor = () => {
             <div className="search-type-buttons">
               <button
                 className={`search-type-button ${
-                  searchType === "semantic" ? "active" : ""
+                  searchActive.semantic ? "active" : "active"
                 }`}
-                onClick={() => setSearchType("semantic")}
               >
                 Semantic
               </button>
 
               <button
                 className={`search-type-button ${
-                  isKeywordSearchActive ? "active" : ""
+                  searchActive.keyword ? "active" : ""
                 }`}
-                onClick={toggleKeywordSearch}
+                onClick={() => toggleSearchType("keyword")}
               >
                 Keyword
               </button>
             </div>
 
-            <div className="search-input">
-              <FaCalendarAlt
-                className="calendar-icon"
-                onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-              />
-              {isCalendarOpen && (
-                <DatePicker
-                  selected={startDate}
-                  onChange={onChange}
-                  onClickOutside={() => setIsCalendarOpen(false)}
-                  open={isCalendarOpen}
-                  dropdownMode="select"
-                  withPortal
-                  startDate={startDate}
-                  endDate={endDate}
-                  selectsRange
+            {searchActive.semantic && (
+              <div className="search-input">
+                <FaCalendarAlt
+                  className="calendar-icon"
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                 />
-              )}
-              <textarea
-                placeholder="Semantic Search:"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearch(e);
-                  }
-                }}
-              />
-              <FaSearch className="search-icon" onClick={handleSearch} />
-            </div>
+                {isCalendarOpen && (
+                  <DatePicker
+                    selected={startDate}
+                    onChange={onChange}
+                    onClickOutside={() => setIsCalendarOpen(false)}
+                    open={isCalendarOpen}
+                    dropdownMode="select"
+                    withPortal
+                    startDate={startDate}
+                    endDate={endDate}
+                    selectsRange
+                  />
+                )}
+                <textarea
+                  placeholder="Enter semantic search query..."
+                  value={semanticQuery}
+                  onChange={(e) => setSemanticQuery(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && searchActive.semantic) {
+                      handleSearch(e);
+                    }
+                  }}
+                />
+                <FaSearch
+                  className="search-icon"
+                  onClick={() => searchActive.semantic && handleSearch()}
+                />
+              </div>
+            )}
+
+            {searchActive.keyword && (
+              <div className="search-input">
+                <input
+                  type="text"
+                  placeholder="Enter keyword search query..."
+                  value={indexSearchQuery}
+                  onChange={(e) => setIndexSearchQuery(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && searchActive.keyword) {
+                      handleSearch(e);
+                    }
+                  }}
+                />
+                {/* Optionally, add a search icon or button for keyword search */}
+              </div>
+            )}
+
             <br></br>
             <br></br>
             {isKeywordSearchActive && (
