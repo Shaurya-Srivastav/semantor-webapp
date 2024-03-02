@@ -2,15 +2,39 @@ import React, { useState } from "react";
 import "./Result.css";
 import { FaHeart, FaRegHeart, FaFileDownload } from "react-icons/fa";
 import Modal from "react-modal";
+import axios from "axios";
 
 function Result({ data }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
-  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [comparisonResult, setComparisonResult] = useState("");
+  const [isComparing, setIsComparing] = useState(false);
 
-  const openCompareModal = () => {
-    setIsCompareModalOpen(true);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const displayOrDefault = (value, defaultMessage = "Not Found") => value || defaultMessage;
+
+  const openCompareModal = async () => {
+    setIsComparing(true);
+    try {
+
+      const token = localStorage.getItem("token");
+      const response = await axios.post("http://129.213.131.75:5000/compare-ideas", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }}, {
+        userIdea: "Your user's idea here", // You need to obtain the user's idea somehow
+        patentIdea: data.abstract, // Using the patent's abstract for comparison
+      }
+    );
+      setComparisonResult(response.data.comparison);
+    } catch (error) {
+      console.error("Failed to compare ideas:", error);
+      setComparisonResult("Failed to fetch comparison.");
+    } finally {
+      setIsComparing(false);
+      setIsCompareModalOpen(true);
+    }
   };
 
   const openModal = () => {
@@ -116,6 +140,7 @@ function Result({ data }) {
         }}
       >
         <h2>Comparison</h2>
+        {isComparing ? <p>Loading comparison...</p> : <p>{comparisonResult}</p>}
         <h1>User Idea:</h1>
         <p id="user-idea-content"></p> {/* Empty paragraph for content */}
         <h1>Patent Abstract:</h1>
@@ -138,22 +163,22 @@ function Result({ data }) {
             Download File
           </button>
           <hr />
-          {data.abstract && (
+           {data.abstract && (
             <div>
               <h3>Abstract</h3>
-              <p>{data.abstract}</p>
+              <p>{displayOrDefault(data.abstract)}</p>
             </div>
           )}
           {data.claims && (
             <div>
               <h3>Claims</h3>
-              <ul>{claimsListItems}</ul>
+              <ul>{claimsListItems.length > 0 ? claimsListItems : <li>{displayOrDefault(null)}</li>}</ul>
             </div>
           )}
           {data.summary && (
             <div>
               <h3>Summary</h3>
-              <p>{data.summary}</p>
+              <p>{displayOrDefault(data.summary)}</p>
             </div>
           )}
         </div>
