@@ -1,69 +1,68 @@
-/* Reset default styles */
-body, html {
+
+body,
+html {
   margin: 0;
   padding: 0;
 }
 
-/* Right Sidebar styles */
+
 .sidebar-right {
   position: fixed;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 300px; /* Width of the sidebar */
+  width: 300px;
   transition: transform 0.3s ease-in-out;
-  transform: translateX(100%); /* Initially hide sidebar off screen */
-  /* rest of your styles */
+  transform: translateX(100%);
+ 
 }
 
 .sidebar-right.open {
-  transform: translateX(0); /* Bring sidebar onto the screen */
+  transform: translateX(0);
 }
 
 .toggle-icon {
   position: absolute;
-  left: -80px; /* Adjust this value to position the icon to the left of the sidebar */
+  left: -80px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 30px; /* Increase the font size to make the icon bigger */
-  color: #FFFFFF; /* Assuming the icon itself is white */
-  background: #00b5ad; /* Your provided teal color */
+  font-size: 30px;
+  color: #ffffff;
+  background: #00b5ad;
   border-radius: 50%;
-  width: 60px; /* Increase width for a larger icon */
-  height: 60px; /* Increase height for a larger icon */
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional shadow for depth */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  z-index: 100; /* Ensure it's above other elements */
+  z-index: 100;
 }
 
 .toggle-icon:hover,
 .toggle-icon:focus {
-  background: #008c8a; /* The darker shade of teal for hover/focus feedback */
+  background: #008c8a;
 }
 
-/* Additional media queries to handle responsiveness */
+
 @media (max-width: 768px) {
   .toggle-icon {
-    left: -30px; /* Adjust for smaller screens if necessary */
-    font-size: 24px; /* Slightly smaller icon for smaller screens */
-    width: 50px; /* Adjust width for smaller screens */
-    height: 50px; /* Adjust height for smaller screens */
+    left: -30px;
+    font-size: 24px;
+    width: 50px;
+    height: 50px;
   }
 }
 
-
-
 .sidebar-right .sidebar-content {
   z-index: 10;
-  /* rest of your styles */
+ 
 }
 
 .sidebar {
-  width: 250px; /* Adjust the width as necessary */
-  background-color: #eeeeee; /* Light gray background */
+  width: 250px;
+  background-color: #eeeeee;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -80,9 +79,9 @@ body, html {
 
 .sidebar-title {
   font-size: 16px;
-  color: #333; /* Dark gray */
+  color: #333;
   margin-bottom: 10px;
-  border-bottom: 1px solid #ccc; /* Light gray border */
+  border-bottom: 1px solid #ccc;
   padding-bottom: 5px;
 }
 
@@ -94,21 +93,32 @@ body, html {
 
 .sidebar-list li {
   display: flex;
-  align-items: center; /* Vertically center */
+  align-items: center;
   font-size: 14px;
-  color: #666; /* Medium gray */
+  color: #666;
   margin-bottom: 5px;
-  height: 40px; /* Give a fixed height to align items */
+  height: 40px;
 }
 
 .sidebar-more {
   font-size: 14px;
-  color: #00b5ad; /* Teal color */
+  color: #00b5ad;
   cursor: pointer;
   text-transform: uppercase;
-  transition: color 0.3s ease; /* Transition for smooth color change */
+  transition: color 0.3s ease;
 }
 
 .sidebar-more:hover {
-  color: #008c8a; /* Darker teal on hover */
+  color: #008c8a;
+}
+
+
+.heart-icon,
+.user-icon {
+  cursor: pointer;
+}
+
+.heart-icon:hover,
+.user-icon:hover {
+  color: #00b5ad;
 }

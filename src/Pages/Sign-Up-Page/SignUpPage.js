@@ -108,6 +108,7 @@ const validateLoginForm = () => {
 
             <button type="submit" className="signup-button">LOGIN</button>
             <p className="login-link" onClick={toggleForm}>Back to Sign Up</p>
+            <p>Forgot Password?</p>
           </form>
 
           </>
