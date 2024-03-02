@@ -241,11 +241,17 @@ const Semantor = () => {
           <BeatLoader color="#00b5ad" loading={loading} />
         </div>
       )}
+
       <header className="semantor-header">
         <h1>SEMANTOR</h1>
         <div className="semantor-user-icons">
-          <FaUser className="user-icon" />
-          <FaHeart className="heart-icon" />
+          <div className="user-dropdown">
+            <FaUser className="user-icon" />
+          </div>
+          <FaHeart
+            className="heart-icon"
+            onClick={() => (window.location.href = "/project")}
+          />
         </div>
       </header>
 
