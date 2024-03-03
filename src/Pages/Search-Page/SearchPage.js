@@ -46,6 +46,9 @@ const Semantor = () => {
 
   const [isKeywordSearchActive, setIsKeywordSearchActive] = useState(false);
   const [keywordSearchQuery, setKeywordSearchQuery] = useState("");
+  const [displayDates, setDisplayDates] = useState(false);
+  const [selectedDates, setSelectedDates] = useState({ startDate: new Date(), endDate: new Date() });
+
 
   useEffect(() => {
     const textArea = document.querySelector(".search-input textarea");
@@ -233,6 +236,19 @@ const Semantor = () => {
     </div>
   );
 
+  const handleStartDateChange = (e) => {
+    const newStartDate = new Date(e.target.value);
+    setStartDate(newStartDate);
+    setSelectedDates(prev => ({ ...prev, startDate: newStartDate }));
+  };
+
+  const handleEndDateChange = (e) => {
+    const newEndDate = new Date(e.target.value);
+    setEndDate(newEndDate);
+    setSelectedDates(prev => ({ ...prev, endDate: newEndDate }));
+  };
+
+
   return (
     <div className="semantor-container">
       {loading && (
@@ -338,17 +354,43 @@ const Semantor = () => {
               <div className="search-input">
                 <FaCalendarAlt
                   className="calendar-icon"
-                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                  onClick={() => {
+                    setIsCalendarOpen(!isCalendarOpen);
+                    if (!isCalendarOpen) {
+                      // When opening the calendar, do nothing about displayDates
+                      return;
+                    }
+                    // When closing the calendar, check if both dates are set
+                    if (startDate && endDate) {
+                      setDisplayDates(true);
+                      setSelectedDates({ startDate, endDate });
+                    } else {
+                      setDisplayDates(false);
+                    }
+                  }}
                 />
+
                 {isCalendarOpen && (
                   <div className="date-picker">
                     <label htmlFor="start-date">
                       Start date:
-                      <input type="date" id="start-date" name="start-date" />
+                      <input
+                        type="date"
+                        id="start-date"
+                        name="start-date"
+                        value={selectedDates.startDate.toISOString().split('T')[0]}
+                        onChange={handleStartDateChange}
+                      />
                     </label>
                     <label htmlFor="end-date">
                       End date:
-                      <input type="date" id="end-date" name="end-date" />
+                      <input
+                        type="date"
+                        id="end-date"
+                        name="end-date"
+                        value={selectedDates.endDate.toISOString().split('T')[0]}
+                        onChange={handleEndDateChange}
+                      />
                     </label>
                   </div>
                 )}
@@ -366,6 +408,12 @@ const Semantor = () => {
                   className="search-icon"
                   onClick={() => searchActive.semantic && handleSearch()}
                 />
+              </div>
+            )}
+
+            {displayDates && startDate && endDate && (
+              <div className="selected-dates-display">
+                Selected Date Range: {selectedDates.startDate.toDateString()} - {selectedDates.endDate.toDateString()}
               </div>
             )}
 

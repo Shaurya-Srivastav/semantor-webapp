@@ -274,7 +274,38 @@ p {
   margin-top: 0; 
 }
 
+.react-markdown {
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
 
+.react-markdown p {
+  margin-bottom: 1em;
+}
+
+.react-markdown strong {
+  font-weight: 600; /* or use 700 for bolder text */
+}
+
+.react-markdown em {
+  font-style: italic;
+}
+
+.react-markdown h1, .react-markdown h2 {
+  margin: 2em 0 1em;
+  font-weight: 700;
+  color: #00b5ad; /* or any color that matches your theme */
+}
+
+.react-markdown ul, .react-markdown ol {
+  padding-left: 20px;
+  margin-bottom: 1em;
+}
+
+.react-markdown li {
+  margin-bottom: 0.5em;
+}
   
   @keyframes likeAnimation {
   

@@ -273,8 +273,8 @@ html {
 
 .history-item:hover .tooltip {
   display: block;
-  max-height: 50vh; ;
-  width: 150%;
+  max-height: 50vh; 
+  width: 400%;
   overflow-y: scroll;
 }
 
@@ -294,4 +294,31 @@ html {
 
 .history-item:last-child {
   margin-bottom: 0;
+}
+
+.selected-dates-display {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background-color: #f8f8f8;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.9em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.selected-dates-display::before {
+  content: '🗓️'; 
+}
+
+
+@media (max-width: 768px) {
+  .selected-dates-display {
+    font-size: 0.8em;
+    padding: 5px 15px;
+  }
 }

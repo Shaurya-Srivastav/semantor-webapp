@@ -4,6 +4,9 @@ import { FaHeart, FaRegHeart, FaFileDownload } from "react-icons/fa";
 import Modal from "react-modal";
 import axios from "axios";
 import { BeatLoader } from "react-spinners";
+import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
+
 
 function Result({ data }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -20,7 +23,7 @@ function Result({ data }) {
     e.preventDefault();
     setLoading(true); // Start the loading animation
     setIsComparing(true);
-  
+
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post("http://129.213.131.75:5000/compare-ideas", {
@@ -30,7 +33,7 @@ function Result({ data }) {
         userIdea: "Your user's idea here", // You need to obtain the user's idea somehow
         patentIdea: data.abstract, // Using the patent's abstract for comparison
       });
-  
+
       setComparisonResult(response.data.comparison);
     } catch (error) {
       console.error("Failed to compare ideas:", error);
@@ -41,7 +44,7 @@ function Result({ data }) {
       setLoading(false); // Stop the loading animation
     }
   };
-  
+
   
   const openModal = () => {
     setModalIsOpen(true);
@@ -119,7 +122,7 @@ function Result({ data }) {
         <div className="search-result-actions">
           <button className="search-result-action" onClick={openCompareModal}>
             {loading ? (
-              <BeatLoader color="#00b5ad" loading={loading} size={8} />
+              <BeatLoader color="#00b5ad" loading={loading} size={10} />
             ) : (
               "DESCRIBE/COMPARE"
             )}
@@ -149,15 +152,15 @@ function Result({ data }) {
           },
         }}
       >
-        <h2>Comparison</h2>
-        {isComparing ? <p>Loading comparison...</p> : <p>{comparisonResult}</p>}
-        <h1>User Idea:</h1>
-        <p id="user-idea-content"></p> {/* Empty paragraph for content */}
-        <h1>Patent Abstract:</h1>
-        <p id="patent-abstract-content"></p> {/* Empty paragraph for content */}
-        <h1>Results:</h1>
-        <p id="results-content"></p> {/* Empty paragraph for content */}
-        {/* Rest of your modal content */}
+        <h2>Why is Patent Related to Query?</h2>
+        {isComparing ? (
+          <p>Loading comparison...</p>
+        ) : (
+          <ReactMarkdown className="react-markdown" remarkPlugins={[gfm]}>
+            {comparisonResult}
+          </ReactMarkdown>
+
+        )}
       </Modal>
 
       <Modal
@@ -173,7 +176,7 @@ function Result({ data }) {
             Download File
           </button>
           <hr />
-           {data.abstract && (
+          {data.abstract && (
             <div>
               <h3>Abstract</h3>
               <p>{displayOrDefault(data.abstract)}</p>
