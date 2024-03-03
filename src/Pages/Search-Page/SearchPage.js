@@ -12,7 +12,6 @@ import {
   FaChevronRight,
   FaChevronLeft,
 } from "react-icons/fa";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import PaginationControls from "../../Components/common/Pagination/PaginationControls";
 import Result from "../../Components/common/Result/Result";
@@ -112,7 +111,7 @@ const Semantor = () => {
     fetchHistory();
   }, []);
 
-  
+
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -120,44 +119,44 @@ const Semantor = () => {
     let endpoint, requestData;
 
     if (searchActive.semantic && !searchActive.keyword) {
-        // Only semantic search is active
-        endpoint = "http://129.213.131.75:5000/search";
-        requestData = {
-            input_idea: semanticQuery,
-            user_input_date: startDate.toISOString().split("T")[0],
-            selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
-        };
+      // Only semantic search is active
+      endpoint = "http://129.213.131.75:5000/search";
+      requestData = {
+        input_idea: semanticQuery,
+        user_input_date: startDate.toISOString().split("T")[0],
+        selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
+      };
     } else if (searchActive.semantic && searchActive.keyword) {
-        // Both semantic and keyword searches are active
-        endpoint = "http://129.213.131.75:5000/combined-search";
-        requestData = {
-            input_idea: semanticQuery,
-            input_index: indexSearchQuery,
-            user_input_date: startDate.toISOString().split("T")[0],
-            selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
-        };
+      // Both semantic and keyword searches are active
+      endpoint = "http://129.213.131.75:5000/combined-search";
+      requestData = {
+        input_idea: semanticQuery,
+        input_index: indexSearchQuery,
+        user_input_date: startDate.toISOString().split("T")[0],
+        selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
+      };
     } else {
-        // If no valid search type is active, possibly due to a UI logic error
-        console.error("No valid search type selected.");
-        setLoading(false);
-        return; // Stop execution
+      // If no valid search type is active, possibly due to a UI logic error
+      console.error("No valid search type selected.");
+      setLoading(false);
+      return; // Stop execution
     }
 
     try {
-        const response = await axios.post(endpoint, requestData);
-        console.log(response.data["Granted results"]);
-        setSearchResults(response.data["Granted results"]);
-        saveSearchHistory(semanticQuery, response.data["Granted results"]);
-        fetchHistory();
+      const response = await axios.post(endpoint, requestData);
+      console.log(response.data["Granted results"]);
+      setSearchResults(response.data["Granted results"]);
+      saveSearchHistory(semanticQuery, response.data["Granted results"]);
+      fetchHistory();
     } catch (error) {
-        alert(
-            "Search error: " +
-            (error.response ? error.response.data.message : "An error occurred")
-        );
+      alert(
+        "Search error: " +
+        (error.response ? error.response.data.message : "An error occurred")
+      );
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
 
   const saveSearchHistory = async (query, results) => {
@@ -276,18 +275,13 @@ const Semantor = () => {
               End date:
               <input type="date" name="end-date" />
             </label>
-            <label>
-              <input type="checkbox" /> Granted
-            </label>
-            <label>
-              <input type="checkbox" /> Pregranted
-            </label>
-            {}
+            { }
             <button type="button" className="filter-submit-button">
               Apply Filters
             </button>
           </SidebarDropdown>
           <SidebarDropdown title="+ History" dropdownId="history">
+            <div>Clear History...</div>
             {history.length > 0 ? (
               history.map((item, index) => (
                 <div
@@ -296,6 +290,7 @@ const Semantor = () => {
                   onClick={() => handleHistoryEntryClick(item.results)}
                 >
                   <span className="history-item-name">{item.query}</span>
+                  <div className="tooltip">{item.query}</div>
                   <span className="history-item-date">
                     {new Date(item.timestamp).toLocaleDateString()}
                   </span>
@@ -312,9 +307,8 @@ const Semantor = () => {
             {["abstract", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
-                className={`nav-button ${
-                  activeTabs.includes(tab) ? "active" : ""
-                }`}
+                className={`nav-button ${activeTabs.includes(tab) ? "active" : ""
+                  }`}
                 onClick={() => toggleTab(tab)}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -325,17 +319,15 @@ const Semantor = () => {
           <div className="search-section">
             <div className="search-type-buttons">
               <button
-                className={`search-type-button ${
-                  searchActive.semantic ? "active" : "active"
-                }`}
+                className={`search-type-button ${searchActive.semantic ? "active" : "active"
+                  }`}
               >
                 Semantic
               </button>
 
               <button
-                className={`search-type-button ${
-                  searchActive.keyword ? "active" : ""
-                }`}
+                className={`search-type-button ${searchActive.keyword ? "active" : ""
+                  }`}
                 onClick={() => toggleSearchType("keyword")}
               >
                 Keyword
@@ -349,17 +341,16 @@ const Semantor = () => {
                   onClick={() => setIsCalendarOpen(!isCalendarOpen)}
                 />
                 {isCalendarOpen && (
-                  <DatePicker
-                    selected={startDate}
-                    onChange={onChange}
-                    onClickOutside={() => setIsCalendarOpen(false)}
-                    open={isCalendarOpen}
-                    dropdownMode="select"
-                    withPortal
-                    startDate={startDate}
-                    endDate={endDate}
-                    selectsRange
-                  />
+                  <div className="date-picker">
+                    <label htmlFor="start-date">
+                      Start date:
+                      <input type="date" id="start-date" name="start-date" />
+                    </label>
+                    <label htmlFor="end-date">
+                      End date:
+                      <input type="date" id="end-date" name="end-date" />
+                    </label>
+                  </div>
                 )}
                 <textarea
                   placeholder="Enter semantic search query..."
@@ -391,7 +382,7 @@ const Semantor = () => {
                     }
                   }}
                 />
-                {/* Optionally, add a search icon or button for keyword search */}
+
               </div>
             )}
 

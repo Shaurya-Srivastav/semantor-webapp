@@ -109,7 +109,6 @@ a {
   text-transform: capitalize;
 }
 
-.nav-button:hover,
 .nav-button.active {
   color: #fff;
   background-color: #00b5ad;
@@ -204,29 +203,6 @@ a {
   height: 16px;
   border-radius: 2px;
   background-color: #00b5ad;
-}
-
-.history-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #ddd;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.history-item-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.history-item-date {
-  white-space: nowrap;
-}
-
-.history-item:last-child {
-  border-bottom: none;
 }
 
 .semantor-main {

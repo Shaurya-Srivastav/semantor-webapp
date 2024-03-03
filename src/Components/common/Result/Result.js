@@ -3,10 +3,12 @@ import "./Result.css";
 import { FaHeart, FaRegHeart, FaFileDownload } from "react-icons/fa";
 import Modal from "react-modal";
 import axios from "axios";
+import { BeatLoader } from "react-spinners";
 
 function Result({ data }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [comparisonResult, setComparisonResult] = useState("");
   const [isComparing, setIsComparing] = useState(false);
@@ -14,19 +16,21 @@ function Result({ data }) {
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const displayOrDefault = (value, defaultMessage = "Not Found") => value || defaultMessage;
 
-  const openCompareModal = async () => {
+  const openCompareModal = async (e) => {
+    e.preventDefault();
+    setLoading(true); // Start the loading animation
     setIsComparing(true);
+  
     try {
-
       const token = localStorage.getItem("token");
       const response = await axios.post("http://129.213.131.75:5000/compare-ideas", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         userIdea: "Your user's idea here", // You need to obtain the user's idea somehow
         patentIdea: data.abstract, // Using the patent's abstract for comparison
-      }
-    );
+      });
+  
       setComparisonResult(response.data.comparison);
     } catch (error) {
       console.error("Failed to compare ideas:", error);
@@ -34,9 +38,11 @@ function Result({ data }) {
     } finally {
       setIsComparing(false);
       setIsCompareModalOpen(true);
+      setLoading(false); // Stop the loading animation
     }
   };
-
+  
+  
   const openModal = () => {
     setModalIsOpen(true);
   };
@@ -112,7 +118,11 @@ function Result({ data }) {
         <p className="search-result-description">{data.summary}</p>
         <div className="search-result-actions">
           <button className="search-result-action" onClick={openCompareModal}>
-            DESCRIBE/COMPARE
+            {loading ? (
+              <BeatLoader color="#00b5ad" loading={loading} size={8} />
+            ) : (
+              "DESCRIBE/COMPARE"
+            )}
           </button>
           <button
             className="search-result-action"
