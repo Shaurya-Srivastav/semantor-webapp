@@ -66,9 +66,10 @@ function Result({ data }) {
       : text;
   }
 
-  const downloadFile = () => {
+  const downloadFile = (patentId) => {
     console.log("Download button clicked");
-    // Implement file download functionality here
+    const url = `https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/${patentId}`;
+    window.open(url, "_blank");
   };
 
   const openGooglePatent = (patentId) => {
@@ -110,7 +111,7 @@ function Result({ data }) {
           </div>
           <div className="search-result-meta">
             <span className="search-result-number">{data.patent_id}</span>
-            <button className="icon-button" onClick={downloadFile}>
+            <button className="icon-button" onClick={() => downloadFile(data.patent_id)}>
               <FaFileDownload />
             </button>
             <button className="button-open" onClick={openModal}>
@@ -172,7 +173,7 @@ function Result({ data }) {
       >
         <h2>{data.title}</h2>
         <div className="modal-content">
-          <button onClick={downloadFile} className="download-button">
+          <button onClick={() => downloadFile(data.patent_id)} className="download-button">
             Download File
           </button>
           <hr />
