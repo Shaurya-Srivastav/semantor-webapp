@@ -111,9 +111,10 @@ function Result({ data }) {
           </div>
           <div className="search-result-meta">
             <span className="search-result-number">{data.patent_id}</span>
-            <button className="icon-button" onClick={() => downloadFile(data.patent_id)}>
+            <a href={`https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/${data.patent_id}`} target="_blank" className="icon-button">
               <FaFileDownload />
-            </button>
+            </a>
+
             <button className="button-open" onClick={openModal}>
               OPEN
             </button>
