@@ -4,9 +4,8 @@ import { FaHeart, FaRegHeart, FaFileDownload } from "react-icons/fa";
 import Modal from "react-modal";
 import axios from "axios";
 import { BeatLoader } from "react-spinners";
-import ReactMarkdown from 'react-markdown';
-import gfm from 'remark-gfm';
-
+import ReactMarkdown from "react-markdown";
+import gfm from "remark-gfm";
 
 function Result({ data, userIdea }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -17,7 +16,45 @@ function Result({ data, userIdea }) {
   const [isComparing, setIsComparing] = useState(false);
 
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
-  const displayOrDefault = (value, defaultMessage = "Not Found") => value || defaultMessage;
+  const displayOrDefault = (value, defaultMessage = "Not Found") =>
+    value || defaultMessage;
+
+  const [highlightResult, setHighlightResult] = useState({
+    abstract: [],
+    claims: [],
+    summary: [],
+  });
+  const [highlightTriggered, setHighlightTriggered] = useState(false);
+
+  const highlightSentences = async () => {
+    setLoading(true);
+    setHighlightTriggered(false); // Reset this flag each time the function is called
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.post(
+        "http://150.136.47.221:5000/highlight",
+        {
+          patentText: data,
+          inputIdea: userIdea,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setHighlightResult(response.data);
+      setHighlightTriggered(true); // Set to true only on successful highlight fetch
+      openModal(); // Open the modal to show the results
+    } catch (error) {
+      console.error("Failed to highlight sentences:", error);
+      setHighlightResult({ abstract: [], claims: [], summary: [] }); // Reset on error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openCompareModal = async (e) => {
     e.preventDefault();
@@ -26,13 +63,16 @@ function Result({ data, userIdea }) {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("http://150.136.47.221:5000/compare-ideas", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        userIdea: userIdea, // You need to obtain the user's idea somehow
-        patentIdea: data.abstract, // Using the patent's abstract for comparison
-      });
+      const response = await axios.post(
+        "http://150.136.47.221:5000/compare-ideas",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          userIdea: userIdea, // You need to obtain the user's idea somehow
+          patentIdea: data.abstract, // Using the patent's abstract for comparison
+        }
+      );
 
       setComparisonResult(response.data.comparison);
     } catch (error) {
@@ -45,13 +85,13 @@ function Result({ data, userIdea }) {
     }
   };
 
-  
   const openModal = () => {
     setModalIsOpen(true);
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
+    setHighlightTriggered(false);
   };
 
   const toggleLike = () => {
@@ -111,7 +151,11 @@ function Result({ data, userIdea }) {
           </div>
           <div className="search-result-meta">
             <span className="search-result-number">{data.patent_id}</span>
-            <a href={`https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/${data.patent_id}`} target="_blank" className="icon-button">
+            <a
+              href={`https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/${data.patent_id}`}
+              target="_blank"
+              className="icon-button"
+            >
               <FaFileDownload />
             </a>
 
@@ -137,68 +181,98 @@ function Result({ data, userIdea }) {
           </button>
           <button className="search-result-action">SAVE TO PROJECT</button>
           <button className="search-result-action">USPTO</button>
-          <button className="search-result-action">Highlight</button>
+          <button className="search-result-action" onClick={highlightSentences}>
+            {loading ? (
+              <BeatLoader color="#00b5ad" loading={loading} size={10} />
+            ) : (
+              "HIGHLIGHT"
+            )}
+          </button>
         </div>
       </div>
 
       <Modal
-        isOpen={isCompareModalOpen}
-        onRequestClose={() => setIsCompareModalOpen(false)}
-        style={{
-          content: {
-            maxWidth: "60%",
-            maxHeight: "60%",
-            margin: "auto",
-            border: "2px solid #00b5ad",
-            overflow: "auto",
-          },
-        }}
-      >
-        <h2>Why is Patent Related to Query?</h2>
-        {isComparing ? (
-          <p>Loading comparison...</p>
-        ) : (
-          <ReactMarkdown className="react-markdown" remarkPlugins={[gfm]}>
-            {comparisonResult}
-          </ReactMarkdown>
-
-        )}
-      </Modal>
-
-      <Modal
         isOpen={modalIsOpen}
-        onRequestClose={closeModal}
+        onRequestClose={() => {
+          closeModal();
+          setHighlightTriggered(false);
+        }}
         contentLabel="Detail Modal"
         className="modal"
         overlayClassName="overlay"
       >
         <h2>{data.title}</h2>
         <div className="modal-content">
-          <button onClick={() => downloadFile(data.patent_id)} className="download-button">
+          <button
+            onClick={() => downloadFile(data.patent_id)}
+            className="download-button"
+          >
             Download File
           </button>
           <hr />
-          {data.abstract && (
-            <div>
-              <h3>Abstract</h3>
-              <p>{displayOrDefault(data.abstract)}</p>
-            </div>
-          )}
-          {data.claims && (
-            <div>
-              <h3>Claims</h3>
-              <ul>{claimsListItems.length > 0 ? claimsListItems : <li>{displayOrDefault(null)}</li>}</ul>
-            </div>
-          )}
-          {data.summary && (
-            <div>
-              <h3>Summary</h3>
-              <p>{displayOrDefault(data.summary)}</p>
-            </div>
-          )}
+          {/* Abstract Section */}
+          <h3>Abstract</h3>
+          <p>
+            {highlightTriggered
+              ? data.abstract.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
+                  const highlight = highlightResult.highlights.abstract.some(
+                    (highlightSentence) => sentence.includes(highlightSentence)
+                  );
+                  return highlight ? (
+                    <span key={idx} style={{ backgroundColor: "yellow" }}>
+                      {sentence}{" "}
+                    </span>
+                  ) : (
+                    <span key={idx}>{sentence}. </span>
+                  );
+                })
+              : displayOrDefault(data.abstract)}
+          </p>
+          {/* Claims Section */}
+          <h3>Claims</h3>
+          <p>
+            {highlightTriggered
+              ? data.claims.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
+                  const highlight = highlightResult.highlights.claims.some(
+                    (highlightSentence) => sentence.includes(highlightSentence)
+                  );
+                  return highlight ? (
+                    <span key={idx} style={{ backgroundColor: "yellow" }}>
+                      {sentence}{" "}
+                    </span>
+                  ) : (
+                    <span key={idx}>{sentence}. </span>
+                  );
+                })
+              : displayOrDefault(data.claims)}
+          </p>
+          {/* Summary Section */}
+          <h3>Summary</h3>
+          <p>
+            {highlightTriggered
+              ? data.summary.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
+                  const highlight = highlightResult.highlights.summary.some(
+                    (highlightSentence) => sentence.includes(highlightSentence)
+                  );
+                  return highlight ? (
+                    <span key={idx} style={{ backgroundColor: "yellow" }}>
+                      {sentence}{" "}
+                    </span>
+                  ) : (
+                    <span key={idx}>{sentence}. </span>
+                  );
+                })
+              : displayOrDefault(data.summary)}
+          </p>
         </div>
         <div className="modal-footer">
-          <button onClick={closeModal} className="close-button">
+          <button
+            onClick={() => {
+              closeModal();
+              setHighlightTriggered(false);
+            }}
+            className="close-button"
+          >
             Close
           </button>
         </div>
