@@ -46,7 +46,7 @@ const Semantor = () => {
       }
   
       // Include the Authorization header with the token
-      const response = await axios.get("http://129.213.131.75:5000/get_search_history", {
+      const response = await axios.get("http://150.136.47.221:5000/get_search_history", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 
 
-function Result({ data }) {
+function Result({ data, userIdea }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,11 +26,11 @@ function Result({ data }) {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post("http://129.213.131.75:5000/compare-ideas", {
+      const response = await axios.post("http://150.136.47.221:5000/compare-ideas", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        userIdea: "Your user's idea here", // You need to obtain the user's idea somehow
+        userIdea: userIdea, // You need to obtain the user's idea somehow
         patentIdea: data.abstract, // Using the patent's abstract for comparison
       });
 

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './SignUpPage.css';
+import { useAuth } from '../../context/AuthContext';
 
 const SignUpPage = () => {
+  const { login } = useAuth();
   const [animationStage, setAnimationStage] = useState(0);
   const [showLogin, setShowLogin] = useState(false);
   const [signUpEmail, setSignUpEmail] = useState('');
@@ -57,12 +59,12 @@ const validateLoginForm = () => {
     e.preventDefault();
     if (!validateSignUpForm()) return;
     try {
-      const response = await axios.post('http://129.213.131.75:5000/register', {
+      const response = await axios.post('http://150.136.47.221:5000/register', {
         username: signUpEmail,
         password: signUpPassword,
       });
       console.log(response.data);
-      localStorage.setItem('token', response.data.access_token);
+      login(response.data.access_token);
       navigate('/search');
     } catch (error) {
       alert(error.response ? error.response.data.message : 'An error occurred');
@@ -73,12 +75,12 @@ const validateLoginForm = () => {
     e.preventDefault();
     if (!validateLoginForm()) return;
     try {
-      const response = await axios.post('http://129.213.131.75:5000/login', {
+      const response = await axios.post('http://150.136.47.221:5000/login', {
         username: loginEmail,
         password: loginPassword,
       });
       console.log(response.data);
-      localStorage.setItem('token', response.data.access_token);
+      login(response.data.access_token);
       navigate('/search');
     } catch (error) {
       alert(error.response ? error.response.data.message : 'An error occurred');

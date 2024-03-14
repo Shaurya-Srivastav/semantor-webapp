@@ -91,10 +91,11 @@ const Semantor = () => {
 
   const handleHistoryEntryClick = (historyEntryResults) => {
     const resultsArray =
-      typeof historyEntryResults === "string"
-        ? JSON.parse(historyEntryResults)
-        : historyEntryResults;
+      typeof historyEntryResults.results === "string"
+        ? JSON.parse(historyEntryResults.results)
+        : historyEntryResults.results;
     setSelectedHistoryResults(resultsArray);
+    setSemanticQuery(historyEntryResults.query);
     setCurrentPage(1);
   };
 
@@ -123,7 +124,7 @@ const Semantor = () => {
 
     if (searchActive.semantic && !searchActive.keyword) {
       // Only semantic search is active
-      endpoint = "http://129.213.131.75:5000/search";
+      endpoint = "http://150.136.47.221:5000/search";
       requestData = {
         input_idea: semanticQuery,
         user_input_date: startDate.toISOString().split("T")[0],
@@ -131,7 +132,7 @@ const Semantor = () => {
       };
     } else if (searchActive.semantic && searchActive.keyword) {
       // Both semantic and keyword searches are active
-      endpoint = "http://129.213.131.75:5000/combined-search";
+      endpoint = "http://150.136.47.221:5000/combined-search";
       requestData = {
         input_idea: semanticQuery,
         input_index: indexSearchQuery,
@@ -166,7 +167,7 @@ const Semantor = () => {
     const token = localStorage.getItem("token");
     try {
       await axios.post(
-        "http://129.213.131.75:5000/save_search",
+        "http://150.136.47.221:5000/save_search",
         {
           query,
           results,
@@ -189,7 +190,7 @@ const Semantor = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://129.213.131.75:5000/get_search_history",
+        "http://150.136.47.221:5000/get_search_history",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -303,7 +304,7 @@ const Semantor = () => {
                 <div
                   key={index}
                   className="history-item"
-                  onClick={() => handleHistoryEntryClick(item.results)}
+                  onClick={() => handleHistoryEntryClick(item)}
                 >
                   <span className="history-item-name">{item.query}</span>
                   <div className="tooltip">{item.query}</div>
@@ -460,7 +461,7 @@ const Semantor = () => {
                 currentPage * itemsPerPage
               )
               .map((result, index) => (
-                <Result key={index} data={result} />
+                <Result key={index} data={result} userIdea={semanticQuery} />
               ))}
 
             {totalPages > 1 && (
