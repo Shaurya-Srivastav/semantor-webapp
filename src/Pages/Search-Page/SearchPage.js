@@ -120,6 +120,8 @@ const Semantor = () => {
     e.preventDefault();
     setLoading(true);
 
+    setSelectedHistoryResults([]);
+
     let endpoint, requestData;
 
     if (searchActive.semantic && !searchActive.keyword) {
