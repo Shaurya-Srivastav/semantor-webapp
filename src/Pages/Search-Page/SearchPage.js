@@ -16,6 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import PaginationControls from "../../Components/common/Pagination/PaginationControls";
 import Result from "../../Components/common/Result/Result";
 import Modal from "react-modal";
+import { useLocation } from "react-router-dom";
 
 Modal.setAppElement("#root");
 
@@ -32,7 +33,7 @@ const Semantor = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [history, setHistory] = useState([]);
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date('1970-01-01'));
   const [endDate, setEndDate] = useState(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -47,8 +48,14 @@ const Semantor = () => {
   const [isKeywordSearchActive, setIsKeywordSearchActive] = useState(false);
   const [keywordSearchQuery, setKeywordSearchQuery] = useState("");
   const [displayDates, setDisplayDates] = useState(false);
-  const [selectedDates, setSelectedDates] = useState({ startDate: new Date(), endDate: new Date() });
+  const [selectedDates, setSelectedDates] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
 
+  const location = useLocation();
+  const historyResults = location.state?.historyItem;
+  console.log(historyResults);
 
   useEffect(() => {
     const textArea = document.querySelector(".search-input textarea");
@@ -66,13 +73,20 @@ const Semantor = () => {
       this.style.height = "40px"; // Set to default height of one line
     }
 
+    if (historyResults) {
+      setSelectedHistoryResults(historyResults.results);
+      setSemanticQuery(historyResults.query);
+    } else {
+      fetchHistory();
+    }
+
     // Clean up the event listeners when the component unmounts
     return () => {
       textArea.removeEventListener("input", autoResize, false);
       textArea.removeEventListener("focus", autoResize, false);
       textArea.removeEventListener("blur", resetSize, false);
     };
-  }, []);
+  }, [historyResults]);
 
   const toggleSemanticSearch = () => {
     setSearchActive({ semantic: true, keyword: false });
@@ -103,8 +117,13 @@ const Semantor = () => {
     setCurrentPage(page);
   };
 
-  const displayedResults =
-    selectedHistoryResults.length > 0 ? selectedHistoryResults : searchResults;
+  // When rendering the component
+  const displayedResults = (
+    selectedHistoryResults.length > 0 ? selectedHistoryResults : searchResults
+  ).filter((result) => {
+    const resultDate = new Date(result.date); // Assuming 'result.date' exists and is in a format that can be parsed by Date
+    return resultDate >= startDate && resultDate <= endDate;
+  });
   const totalPages = Math.ceil(searchResults.length / itemsPerPage);
 
   const toggleSidebar = () => {
@@ -114,7 +133,6 @@ const Semantor = () => {
   useEffect(() => {
     fetchHistory();
   }, []);
-
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -130,7 +148,10 @@ const Semantor = () => {
       requestData = {
         input_idea: semanticQuery,
         user_input_date: startDate.toISOString().split("T")[0],
-        selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
+        selected_indexes:
+          activeTabs.length > 0
+            ? activeTabs
+            : ["abstract", "claims", "summary"],
       };
     } else if (searchActive.semantic && searchActive.keyword) {
       // Both semantic and keyword searches are active
@@ -139,7 +160,10 @@ const Semantor = () => {
         input_idea: semanticQuery,
         input_index: indexSearchQuery,
         user_input_date: startDate.toISOString().split("T")[0],
-        selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
+        selected_indexes:
+          activeTabs.length > 0
+            ? activeTabs
+            : ["abstract", "claims", "summary"],
       };
     } else {
       // If no valid search type is active, possibly due to a UI logic error
@@ -157,13 +181,12 @@ const Semantor = () => {
     } catch (error) {
       alert(
         "Search error: " +
-        (error.response ? error.response.data.message : "An error occurred")
+          (error.response ? error.response.data.message : "An error occurred")
       );
     } finally {
       setLoading(false);
     }
   };
-
 
   const saveSearchHistory = async (query, results) => {
     const token = localStorage.getItem("token");
@@ -242,15 +265,14 @@ const Semantor = () => {
   const handleStartDateChange = (e) => {
     const newStartDate = new Date(e.target.value);
     setStartDate(newStartDate);
-    setSelectedDates(prev => ({ ...prev, startDate: newStartDate }));
+    setSelectedDates((prev) => ({ ...prev, startDate: newStartDate }));
   };
 
   const handleEndDateChange = (e) => {
     const newEndDate = new Date(e.target.value);
     setEndDate(newEndDate);
-    setSelectedDates(prev => ({ ...prev, endDate: newEndDate }));
+    setSelectedDates((prev) => ({ ...prev, endDate: newEndDate }));
   };
-
 
   return (
     <div className="semantor-container">
@@ -288,21 +310,29 @@ const Semantor = () => {
           <SidebarDropdown title="+ Filters" dropdownId="filters">
             <label>
               Start date:
-              <input type="date" name="start-date" />
+              <input
+                type="date"
+                name="start-date"
+                value={startDate.toISOString().split("T")[0]} // Format the date to YYYY-MM-DD
+                onChange={handleStartDateChange} // Assuming you have this handler defined
+              />
             </label>
             <label>
               End date:
-              <input type="date" name="end-date" />
+              <input
+                type="date"
+                name="end-date"
+                value={endDate.toISOString().split("T")[0]} // Format the date to YYYY-MM-DD
+                onChange={handleEndDateChange} // Assuming you have this handler defined
+              />
             </label>
-            { }
-            <button type="button" className="filter-submit-button">
-              Apply Filters
-            </button>
+
           </SidebarDropdown>
+
           <SidebarDropdown title="+ History" dropdownId="history">
             <div>Clear History...</div>
             {history.length > 0 ? (
-              history.map((item, index) => (
+              [...history].reverse().map((item, index) => (
                 <div
                   key={index}
                   className="history-item"
@@ -326,8 +356,9 @@ const Semantor = () => {
             {["abstract", "claims", "summary"].map((tab) => (
               <button
                 key={tab}
-                className={`nav-button ${activeTabs.includes(tab) ? "active" : ""
-                  }`}
+                className={`nav-button ${
+                  activeTabs.includes(tab) ? "active" : ""
+                }`}
                 onClick={() => toggleTab(tab)}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -338,15 +369,17 @@ const Semantor = () => {
           <div className="search-section">
             <div className="search-type-buttons">
               <button
-                className={`search-type-button ${searchActive.semantic ? "active" : "active"
-                  }`}
+                className={`search-type-button ${
+                  searchActive.semantic ? "active" : "active"
+                }`}
               >
                 Semantic
               </button>
 
               <button
-                className={`search-type-button ${searchActive.keyword ? "active" : ""
-                  }`}
+                className={`search-type-button ${
+                  searchActive.keyword ? "active" : ""
+                }`}
                 onClick={() => toggleSearchType("keyword")}
               >
                 Keyword
@@ -381,7 +414,9 @@ const Semantor = () => {
                         type="date"
                         id="start-date"
                         name="start-date"
-                        value={selectedDates.startDate.toISOString().split('T')[0]}
+                        value={
+                          selectedDates.startDate.toISOString().split("T")[0]
+                        }
                         onChange={handleStartDateChange}
                       />
                     </label>
@@ -391,7 +426,9 @@ const Semantor = () => {
                         type="date"
                         id="end-date"
                         name="end-date"
-                        value={selectedDates.endDate.toISOString().split('T')[0]}
+                        value={
+                          selectedDates.endDate.toISOString().split("T")[0]
+                        }
                         onChange={handleEndDateChange}
                       />
                     </label>
@@ -416,7 +453,8 @@ const Semantor = () => {
 
             {displayDates && startDate && endDate && (
               <div className="selected-dates-display">
-                Selected Date Range: {selectedDates.startDate.toDateString()} - {selectedDates.endDate.toDateString()}
+                Selected Date Range: {selectedDates.startDate.toDateString()} -{" "}
+                {selectedDates.endDate.toDateString()}
               </div>
             )}
 
@@ -433,7 +471,6 @@ const Semantor = () => {
                     }
                   }}
                 />
-
               </div>
             )}
 

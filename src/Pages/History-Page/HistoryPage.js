@@ -6,9 +6,10 @@ import Modal from 'react-modal';
 import "react-datepicker/dist/react-datepicker.css";
 import PaginationControls from "../../Components/common/Pagination/PaginationControls";
 import Result from "../../Components/common/Result/Result";
-
+import { useNavigate } from 'react-router-dom';
 
 Modal.setAppElement('#root');
+
 
 
 const Semantor = () => {
@@ -25,6 +26,8 @@ const Semantor = () => {
   const [liked, setLiked] = useState(false);
 
   const [searchHistory, setSearchHistory] = useState([]);
+
+  const navigate = useNavigate();
 
   
 
@@ -57,6 +60,7 @@ const Semantor = () => {
         results: JSON.parse(item.results) // Parse the results string into an array
       }));
       setSearchHistory(parsedHistory);
+      console.log(parsedHistory)
     } catch (error) {
       console.error("Failed to fetch search history:", error);
     }
@@ -130,6 +134,11 @@ const Semantor = () => {
 
   };
 
+  const handleHistoryItemClick = (historyItem) => {
+    navigate('/search', { state: { historyItem: historyItem } });
+  };
+  
+
 
 
   return (
@@ -200,28 +209,13 @@ const Semantor = () => {
             <br></br>
 
 
-            {searchHistory.map((historyItem, index) => {
-        // Determine the current page for this history item
-        const currentPage = currentPageMap[historyItem.id] || 1;
-        const totalPages = Math.ceil(historyItem.results.length / itemsPerPage);
+            {searchHistory.map((historyItem, index) => (
+              <div key={historyItem.id} className="history-query" onClick={() => handleHistoryItemClick(historyItem)}>
+                <h2>{historyItem.query}</h2>
+              </div>
+            ))}
+            
 
-        return (
-          <div key={historyItem.id}>
-            <h2>{historyItem.query}</h2>
-            {/* Paginate patents within this history item */}
-            {historyItem.results
-              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-              .map((result, idx) => (
-                <Result key={idx} data={result} />
-              ))}
-            <PaginationControls 
-              currentPage={currentPage} 
-              totalPages={totalPages} 
-              onPageChange={(newPage) => onPageChange(historyItem.id, newPage)}
-            />
-          </div>
-        );
-      })}
 
 
             <PaginationControls></PaginationControls>
