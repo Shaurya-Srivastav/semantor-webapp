@@ -58,32 +58,36 @@ function Result({ data, userIdea }) {
 
   const openCompareModal = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start the loading animation
+    setLoading(true);
     setIsComparing(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://150.136.47.221:5000/compare-ideas",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          userIdea: userIdea, // You need to obtain the user's idea somehow
-          patentIdea: data.abstract, // Using the patent's abstract for comparison
-        }
-      );
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            "http://150.136.47.221:5000/compare-ideas",
+            {
+                userIdea: userIdea, // Assuming this is correct
+                patentIdea: data.abstract, // Assuming this is the intended comparison
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
-      setComparisonResult(response.data.comparison);
+        console.log("Comparison response:", response.data); // Debugging log
+        setComparisonResult(response.data.comparison);
+        setIsCompareModalOpen(true); // Ensure this is set to true
     } catch (error) {
-      console.error("Failed to compare ideas:", error);
-      setComparisonResult("Failed to fetch comparison.");
+        console.error("Failed to compare ideas:", error);
+        setComparisonResult("Failed to fetch comparison.");
     } finally {
-      setIsComparing(false);
-      setIsCompareModalOpen(true);
-      setLoading(false); // Stop the loading animation
+        setIsComparing(false);
+        setLoading(false);
     }
-  };
+};
+
 
   const openModal = () => {
     setModalIsOpen(true);
