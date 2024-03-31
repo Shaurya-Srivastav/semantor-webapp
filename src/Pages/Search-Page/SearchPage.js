@@ -302,7 +302,7 @@ const Semantor = () => {
           <SidebarDropdown title="+ History" dropdownId="history">
             <div>Clear History...</div>
             {history.length > 0 ? (
-              history.map((item, index) => (
+              [...history].reverse().map((item, index) => (
                 <div
                   key={index}
                   className="history-item"
