@@ -19,9 +19,9 @@ const SignUpPage = () => {
 
   useEffect(() => {
     const timeouts = [
-      setTimeout(() => setAnimationStage(1), 500),
-      setTimeout(() => setAnimationStage(2), 2000),
-      setTimeout(() => setAnimationStage(3), 3500),
+      setTimeout(() => setAnimationStage(1), 25),
+      setTimeout(() => setAnimationStage(2), 50),
+      setTimeout(() => setAnimationStage(3), 100),
     ];
 
     return () => timeouts.forEach(clearTimeout);

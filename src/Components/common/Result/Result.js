@@ -62,31 +62,31 @@ function Result({ data, userIdea }) {
     setIsComparing(true);
 
     try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-            "http://150.136.47.221:5000/compare-ideas",
-            {
-                userIdea: userIdea, // Assuming this is correct
-                patentIdea: data.abstract, // Assuming this is the intended comparison
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://150.136.47.221:5000/compare-ideas",
+        {
+          userIdea: userIdea, // Assuming this is correct
+          patentIdea: data.abstract, // Assuming this is the intended comparison
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-        console.log("Comparison response:", response.data); // Debugging log
-        setComparisonResult(response.data.comparison);
-        setIsCompareModalOpen(true); // Ensure this is set to true
+      console.log("Comparison response:", response.data); // Debugging log
+      setComparisonResult(response.data.comparison);
+      setIsCompareModalOpen(true); // Ensure this is set to true
     } catch (error) {
-        console.error("Failed to compare ideas:", error);
-        setComparisonResult("Failed to fetch comparison.");
+      console.error("Failed to compare ideas:", error);
+      setComparisonResult("Failed to fetch comparison.");
     } finally {
-        setIsComparing(false);
-        setLoading(false);
+      setIsComparing(false);
+      setLoading(false);
     }
-};
+  };
 
 
   const openModal = () => {
@@ -120,6 +120,10 @@ function Result({ data, userIdea }) {
     const url = `https://patents.google.com/patent/US${patentId}/en`;
     window.open(url, "_blank");
   };
+  const openUSPTO = (patentId) => {
+    const url = `https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/${patentId}`;
+    window.open(url, "_blank");
+  };
 
   function formatClaims(claimsText) {
     if (!claimsText) return []; // Ensure claimsText is not null or undefined
@@ -138,6 +142,8 @@ function Result({ data, userIdea }) {
   }
 
   const claimsListItems = formatClaims(data.claims);
+
+  
 
   return (
     <div>
@@ -184,7 +190,7 @@ function Result({ data, userIdea }) {
             GOOGLE PATENT
           </button>
           <button className="search-result-action">SAVE TO PROJECT</button>
-          <button className="search-result-action">USPTO</button>
+          <button className="search-result-action" onClick={() => openUSPTO(data.patent_id)}>USPTO</button>
           <button className="search-result-action" onClick={highlightSentences}>
             {loading ? (
               <BeatLoader color="#00b5ad" loading={loading} size={10} />
@@ -219,17 +225,17 @@ function Result({ data, userIdea }) {
           <p>
             {highlightTriggered
               ? data.abstract.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
-                  const highlight = highlightResult.highlights.abstract.some(
-                    (highlightSentence) => sentence.includes(highlightSentence)
-                  );
-                  return highlight ? (
-                    <span key={idx} style={{ backgroundColor: "yellow" }}>
-                      {sentence}{" "}
-                    </span>
-                  ) : (
-                    <span key={idx}>{sentence}. </span>
-                  );
-                })
+                const highlight = highlightResult.highlights.abstract.some(
+                  (highlightSentence) => sentence.includes(highlightSentence)
+                );
+                return highlight ? (
+                  <span key={idx} style={{ backgroundColor: "yellow" }}>
+                    {sentence}{" "}
+                  </span>
+                ) : (
+                  <span key={idx}>{sentence}. </span>
+                );
+              })
               : displayOrDefault(data.abstract)}
           </p>
           {/* Claims Section */}
@@ -237,17 +243,17 @@ function Result({ data, userIdea }) {
           <p>
             {highlightTriggered
               ? data.claims.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
-                  const highlight = highlightResult.highlights.claims.some(
-                    (highlightSentence) => sentence.includes(highlightSentence)
-                  );
-                  return highlight ? (
-                    <span key={idx} style={{ backgroundColor: "yellow" }}>
-                      {sentence}{" "}
-                    </span>
-                  ) : (
-                    <span key={idx}>{sentence}. </span>
-                  );
-                })
+                const highlight = highlightResult.highlights.claims.some(
+                  (highlightSentence) => sentence.includes(highlightSentence)
+                );
+                return highlight ? (
+                  <span key={idx} style={{ backgroundColor: "yellow" }}>
+                    {sentence}{" "}
+                  </span>
+                ) : (
+                  <span key={idx}>{sentence}. </span>
+                );
+              })
               : displayOrDefault(data.claims)}
           </p>
           {/* Summary Section */}
@@ -255,17 +261,17 @@ function Result({ data, userIdea }) {
           <p>
             {highlightTriggered
               ? data.summary.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
-                  const highlight = highlightResult.highlights.summary.some(
-                    (highlightSentence) => sentence.includes(highlightSentence)
-                  );
-                  return highlight ? (
-                    <span key={idx} style={{ backgroundColor: "yellow" }}>
-                      {sentence}{" "}
-                    </span>
-                  ) : (
-                    <span key={idx}>{sentence}. </span>
-                  );
-                })
+                const highlight = highlightResult.highlights.summary.some(
+                  (highlightSentence) => sentence.includes(highlightSentence)
+                );
+                return highlight ? (
+                  <span key={idx} style={{ backgroundColor: "yellow" }}>
+                    {sentence}{" "}
+                  </span>
+                ) : (
+                  <span key={idx}>{sentence}. </span>
+                );
+              })
               : displayOrDefault(data.summary)}
           </p>
         </div>

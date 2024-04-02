@@ -20,7 +20,7 @@ import Modal from "react-modal";
 Modal.setAppElement("#root");
 
 const Semantor = () => {
-  const [activeTabs, setActiveTabs] = useState([]);
+  const [activeTabs, setActiveTabs] = useState(["abstract", "claims", "summary"]);
   const [semanticQuery, setSemanticQuery] = useState("");
   const [indexSearchQuery, setIndexSearchQuery] = useState("");
   const [searchActive, setSearchActive] = useState({
@@ -37,6 +37,8 @@ const Semantor = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,7 +51,7 @@ const Semantor = () => {
   const [displayDates, setDisplayDates] = useState(false);
   const [selectedDates, setSelectedDates] = useState({ startDate: new Date(), endDate: new Date() });
 
-
+  
   useEffect(() => {
     const textArea = document.querySelector(".search-input textarea");
     textArea.addEventListener("input", autoResize, false);
@@ -117,52 +119,63 @@ const Semantor = () => {
 
 
   const handleSearch = async (e) => {
-    e.preventDefault();
+    // Only call preventDefault if the event object is provided
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
+  
+    // Trim both queries to remove leading/trailing whitespace
+    const trimmedSemanticQuery = semanticQuery.trim();
+    const trimmedKeywordSearchQuery = indexSearchQuery.trim();
+  
+    // Check if both queries are empty after trimming
+    if (!trimmedSemanticQuery && (!searchActive.keyword || !trimmedKeywordSearchQuery)) {
+      // If so, just return without doing anything
+      return;
+    }
+  
     setLoading(true);
-
     setSelectedHistoryResults([]);
-
+  
     let endpoint, requestData;
-
+  
     if (searchActive.semantic && !searchActive.keyword) {
-      // Only semantic search is active
+      // Prepare request for only semantic search
       endpoint = "http://150.136.47.221:5000/search";
       requestData = {
-        input_idea: semanticQuery,
+        input_idea: trimmedSemanticQuery,
         user_input_date: startDate.toISOString().split("T")[0],
         selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
       };
     } else if (searchActive.semantic && searchActive.keyword) {
-      // Both semantic and keyword searches are active
+      // Prepare request for combined search
       endpoint = "http://150.136.47.221:5000/combined-search";
       requestData = {
-        input_idea: semanticQuery,
-        input_index: indexSearchQuery,
+        input_idea: trimmedSemanticQuery,
+        input_index: trimmedKeywordSearchQuery,
         user_input_date: startDate.toISOString().split("T")[0],
         selected_indexes: activeTabs.length > 0 ? activeTabs : ["abstract", "claims", "summary"],
       };
     } else {
-      // If no valid search type is active, possibly due to a UI logic error
       console.error("No valid search type selected.");
       setLoading(false);
-      return; // Stop execution
+      return; // Stop execution if no valid search type is active
     }
-
+  
     try {
       const response = await axios.post(endpoint, requestData);
       console.log(response.data["Granted results"]);
       setSearchResults(response.data["Granted results"]);
-      saveSearchHistory(semanticQuery, response.data["Granted results"]);
+      saveSearchHistory(trimmedSemanticQuery, response.data["Granted results"]);
       fetchHistory();
     } catch (error) {
-      alert(
-        "Search error: " +
-        (error.response ? error.response.data.message : "An error occurred")
-      );
+      alert("Search error: " + (error.response ? error.response.data.message : "An error occurred"));
     } finally {
       setLoading(false);
     }
   };
+  
+
 
 
   const saveSearchHistory = async (query, results) => {
@@ -189,6 +202,7 @@ const Semantor = () => {
   };
 
   const fetchHistory = async () => {
+    setLoadingHistory(true); // Start loading
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
@@ -202,8 +216,11 @@ const Semantor = () => {
       setHistory(response.data);
     } catch (error) {
       console.error("History fetch error:", error);
+    } finally {
+      setLoadingHistory(false); // End loading
     }
   };
+
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
@@ -215,12 +232,16 @@ const Semantor = () => {
   };
 
   const toggleTab = (tab) => {
-    setActiveTabs(
-      activeTabs.includes(tab)
-        ? activeTabs.filter((t) => t !== tab)
-        : [...activeTabs, tab]
-    );
-  };
+    setActiveTabs((currentTabs) => {
+        if (currentTabs.includes(tab)) {
+            // If the tab is currently active, filter it out
+            return currentTabs.filter((t) => t !== tab);
+        } else {
+            // If the tab is not active, add it to the array of active tabs
+            return [...currentTabs, tab];
+        }
+    });
+};
 
   const toggleDropdown = (dropdown) => {
     setIsOpen({ ...isOpen, [dropdown]: !isOpen[dropdown] });
@@ -301,7 +322,12 @@ const Semantor = () => {
           </SidebarDropdown>
           <SidebarDropdown title="+ History" dropdownId="history">
             <div>Clear History...</div>
-            {history.length > 0 ? (
+            {loadingHistory ? (
+              <div className="loading-history">
+                <br></br>
+                <BeatLoader color="#00b5ad" loading={loadingHistory} />
+              </div>
+            ) : history.length > 0 ? (
               [...history].reverse().map((item, index) => (
                 <div
                   key={index}
