@@ -3,7 +3,7 @@ import { BeatLoader } from "react-spinners";
 import axios from "axios";
 import "./SearchPage.css";
 import {
-  FaUser,
+  FaSignOutAlt,
   FaHeart,
   FaCalendarAlt,
   FaSearch,
@@ -16,10 +16,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import PaginationControls from "../../Components/common/Pagination/PaginationControls";
 import Result from "../../Components/common/Result/Result";
 import Modal from "react-modal";
+import { useAuth } from "../../context/AuthContext";
 
 Modal.setAppElement("#root");
 
 const Semantor = () => {
+  const { logout } = useAuth();
   const [activeTabs, setActiveTabs] = useState(["abstract", "claims", "summary"]);
   const [semanticQuery, setSemanticQuery] = useState("");
   const [indexSearchQuery, setIndexSearchQuery] = useState("");
@@ -284,8 +286,8 @@ const Semantor = () => {
       <header className="semantor-header">
         <h1>SEMANTOR</h1>
         <div className="semantor-user-icons">
-          <div className="user-dropdown">
-            <FaUser className="user-icon" />
+          <div className="user-dropdown" onClick={logout}>
+            <FaSignOutAlt className="user-icon" />
           </div>
           <FaHeart
             className="heart-icon"

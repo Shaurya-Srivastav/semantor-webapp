@@ -6,16 +6,21 @@ import axios from "axios";
 import { BeatLoader } from "react-spinners";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
+import { useLoading } from '../../../context/LoadingContext'; // Adjust the import path as needed
+
 
 function Result({ data, userIdea }) {
+  // State for modal, like button, and comparison results
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   const [comparisonResult, setComparisonResult] = useState("");
-  const [isComparing, setIsComparing] = useState(false);
-
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
+  const { isLoading, startLoading, stopLoading, loadingAction, loadingResultId } = useLoading();
+
+  // Unique identifier for this instance of Result, assuming data.patent_id is unique
+  const resultId = data.patent_id;
+
   const displayOrDefault = (value, defaultMessage = "Not Found") =>
     value || defaultMessage;
 
@@ -27,7 +32,7 @@ function Result({ data, userIdea }) {
   const [highlightTriggered, setHighlightTriggered] = useState(false);
 
   const highlightSentences = async () => {
-    setLoading(true);
+    startLoading('highlight', resultId);
     setHighlightTriggered(false); // Reset this flag each time the function is called
     const token = localStorage.getItem("token");
 
@@ -52,41 +57,42 @@ function Result({ data, userIdea }) {
       console.error("Failed to highlight sentences:", error);
       setHighlightResult({ abstract: [], claims: [], summary: [] }); // Reset on error
     } finally {
-      setLoading(false);
+      stopLoading(); // Stop loading regardless of the outcome
     }
   };
 
   const openCompareModal = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setIsComparing(true);
+    startLoading('compare', resultId); // Notify that the 'compare' action is starting with this resultId
 
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://150.136.47.221:5000/compare-ideas",
         {
-          userIdea: userIdea, // Assuming this is correct
-          patentIdea: data.abstract, // Assuming this is the intended comparison
+          userIdea: userIdea, // The user's idea for comparison
+          patentIdea: data.abstract, // The abstract from the patent data
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Authorization token for the API
           },
         }
       );
 
-      console.log("Comparison response:", response.data); // Debugging log
+      // Log and set the comparison result, then open the modal
+      console.log("Comparison response:", response.data);
       setComparisonResult(response.data.comparison);
-      setIsCompareModalOpen(true); // Ensure this is set to true
+      setIsCompareModalOpen(true); // Open the modal to show the comparison results
     } catch (error) {
+      // If there's an error, log it and set an error message
       console.error("Failed to compare ideas:", error);
-      setComparisonResult("Failed to fetch comparison.");
+      setComparisonResult("Failed to fetch comparison. Please try again later.");
     } finally {
-      setIsComparing(false);
-      setLoading(false);
+      stopLoading(); // Notify that the loading process has ended regardless of the outcome
     }
   };
+
 
 
   const openModal = () => {
@@ -143,8 +149,6 @@ function Result({ data, userIdea }) {
 
   const claimsListItems = formatClaims(data.claims);
 
-  
-
   return (
     <div>
       <div className="search-result">
@@ -176,31 +180,77 @@ function Result({ data, userIdea }) {
         </div>
         <p className="search-result-description">{data.summary}</p>
         <div className="search-result-actions">
-          <button className="search-result-action" onClick={openCompareModal}>
-            {loading ? (
-              <BeatLoader color="#00b5ad" loading={loading} size={10} />
+          <button
+            className="search-result-action"
+            onClick={openCompareModal}
+            disabled={isLoading}
+          >
+            {isLoading && loadingAction === 'compare' && loadingResultId === data.patent_id ? (
+              <BeatLoader color="#00b5ad" size={10} />
             ) : (
               "DESCRIBE/COMPARE"
             )}
           </button>
           <button
             className="search-result-action"
-            onClick={() => openGooglePatent(data.patent_id)}
+            onClick={highlightSentences}
+            disabled={isLoading}
           >
-            GOOGLE PATENT
-          </button>
-          <button className="search-result-action">SAVE TO PROJECT</button>
-          <button className="search-result-action" onClick={() => openUSPTO(data.patent_id)}>USPTO</button>
-          <button className="search-result-action" onClick={highlightSentences}>
-            {loading ? (
-              <BeatLoader color="#00b5ad" loading={loading} size={10} />
+            {isLoading && loadingAction === 'highlight' && loadingResultId === data.patent_id ? (
+              <BeatLoader color="#00b5ad" size={10} />
             ) : (
               "HIGHLIGHT"
             )}
           </button>
+          {/* Other buttons don't have specific loading animations; they are just disabled during loading */}
+          <button
+            className="search-result-action"
+            onClick={() => openGooglePatent(data.patent_id)}
+            disabled={isLoading}
+          >
+            GOOGLE PATENT
+          </button>
+          <button
+            className="search-result-action"
+            // If you have a handler for saving to project, add it here
+            disabled={isLoading}
+          >
+            SAVE TO PROJECT
+          </button>
+          <button
+            className="search-result-action"
+            onClick={() => openUSPTO(data.patent_id)}
+            disabled={isLoading}
+          >
+            USPTO
+          </button>
         </div>
-      </div>
 
+      </div>
+      {/* Modal for Comparison Results */}
+      <Modal
+        isOpen={isCompareModalOpen} // Use the correct state variable for the comparison modal
+        onRequestClose={() => setIsCompareModalOpen(false)} // When the modal is requested to close
+        contentLabel="Comparison Results"
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <h2>Comparison Results</h2>
+        <div className="modal-content">
+          {/* Render the comparison results here */}
+          <ReactMarkdown remarkPlugins={[gfm]}>
+            {comparisonResult}
+          </ReactMarkdown>
+        </div>
+        <div className="modal-footer">
+          <button
+            onClick={() => setIsCompareModalOpen(false)} // Close the modal when the button is clicked
+            className="close-button"
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => {
