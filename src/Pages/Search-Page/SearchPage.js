@@ -21,6 +21,12 @@ import { useAuth } from "../../context/AuthContext";
 Modal.setAppElement("#root");
 
 const Semantor = () => {
+  const [filterStartDate, setFilterStartDate] = useState(null);
+  const [filterEndDate, setFilterEndDate] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const [effectiveTotalPages, setEffectiveTotalPages] = useState(0);
+
   const { logout } = useAuth();
   const [activeTabs, setActiveTabs] = useState(["abstract", "claims", "summary"]);
   const [semanticQuery, setSemanticQuery] = useState("");
@@ -53,7 +59,9 @@ const Semantor = () => {
   const [displayDates, setDisplayDates] = useState(false);
   const [selectedDates, setSelectedDates] = useState({ startDate: new Date(), endDate: new Date() });
 
-  
+
+
+
   useEffect(() => {
     const textArea = document.querySelector(".search-input textarea");
     textArea.addEventListener("input", autoResize, false);
@@ -111,6 +119,11 @@ const Semantor = () => {
     selectedHistoryResults.length > 0 ? selectedHistoryResults : searchResults;
   const totalPages = Math.ceil(searchResults.length / itemsPerPage);
 
+  useEffect(() => {
+    setEffectiveTotalPages(Math.ceil(displayedResults.length / itemsPerPage));
+  }, [displayedResults]); // This effect updates effectiveTotalPages whenever displayedResults change
+  
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -125,24 +138,24 @@ const Semantor = () => {
     if (e && typeof e.preventDefault === "function") {
       e.preventDefault();
     }
-  
+
     // Trim both queries to remove leading/trailing whitespace
     const trimmedSemanticQuery = semanticQuery.trim();
     const trimmedKeywordSearchQuery = indexSearchQuery.trim();
-  
+
     // Check if both queries are empty after trimming
     if (!trimmedSemanticQuery && (!searchActive.keyword || !trimmedKeywordSearchQuery)) {
       // If so, just return without doing anything
       return;
     }
-  
-    setCurrentPage(1); 
 
+    setCurrentPage(1);
+    setHasSearched(true); // Add this line to set the flag when search is triggered
     setLoading(true);
     setSelectedHistoryResults([]);
-  
+
     let endpoint, requestData;
-  
+
     if (searchActive.semantic && !searchActive.keyword) {
       // Prepare request for only semantic search
       endpoint = "http://150.136.47.221:5000/search";
@@ -165,7 +178,7 @@ const Semantor = () => {
       setLoading(false);
       return; // Stop execution if no valid search type is active
     }
-  
+
     try {
       const response = await axios.post(endpoint, requestData);
       console.log(response.data["Granted results"]);
@@ -176,9 +189,10 @@ const Semantor = () => {
       alert("Search error: " + (error.response ? error.response.data.message : "An error occurred"));
     } finally {
       setLoading(false);
+      setEffectiveTotalPages(Math.ceil(searchResults.length / itemsPerPage));
     }
   };
-  
+
 
 
 
@@ -272,7 +286,7 @@ const Semantor = () => {
       }
     });
   };
-  
+
 
   const toggleDropdown = (dropdown) => {
     setIsOpen({ ...isOpen, [dropdown]: !isOpen[dropdown] });
@@ -302,6 +316,45 @@ const Semantor = () => {
     setEndDate(newEndDate);
     setSelectedDates(prev => ({ ...prev, endDate: newEndDate }));
   };
+
+  const applyFilters = () => {
+    if (filterStartDate && filterEndDate) {
+      // Filter the searchResults based on the date range
+      const filteredResults = searchResults.filter((result) => {
+        const resultDate = new Date(result.date);
+        return resultDate >= filterStartDate && resultDate <= filterEndDate;
+      });
+      
+      if (filteredResults.length === 0) {
+        // Alert the user that no patents are found and do not update any state
+        alert("No patents found for the selected date range.");
+      } else {
+        // There are results, so update the state to display them
+        setSelectedHistoryResults(filteredResults);
+        setEffectiveTotalPages(Math.ceil(filteredResults.length / itemsPerPage));
+        setCurrentPage(1); // Reset to the first page after filtering
+        setHasSearched(true); // Indicate that a search has been performed
+      }
+    } else {
+      alert('Please select both start and end dates to apply filters.');
+    }
+  };
+  
+  const resetFilter = () => {
+    // Reset the date filters to null or initial values
+    setFilterStartDate(null);
+    setFilterEndDate(null);
+  
+    // Clear the selected history results to go back to the original unfiltered results
+    setSelectedHistoryResults([]);
+  
+    // Reset the effective total pages to the unfiltered results' page count
+    setEffectiveTotalPages(Math.ceil(searchResults.length / itemsPerPage));
+  
+    // Set the current page back to the first page
+    setCurrentPage(1);
+  };
+  
 
 
   return (
@@ -340,21 +393,34 @@ const Semantor = () => {
           <SidebarDropdown title="+ Filters" dropdownId="filters">
             <label>
               Start date:
-              <input type="date" name="start-date" />
+              <input
+                type="date"
+                name="start-date"
+                value={filterStartDate ? filterStartDate.toISOString().split('T')[0] : ''}
+                onChange={(e) => setFilterStartDate(new Date(e.target.value))}
+              />
             </label>
             <label>
               End date:
-              <input type="date" name="end-date" />
+              <input
+                type="date"
+                name="end-date"
+                value={filterEndDate ? filterEndDate.toISOString().split('T')[0] : ''}
+                onChange={(e) => setFilterEndDate(new Date(e.target.value))}
+              />
             </label>
-            { }
-            <button type="button" className="filter-submit-button">
+            <button type="button" className="filter-submit-button" onClick={applyFilters}>
               Apply Filters
             </button>
+            <button type="button" className="filter-submit-button" onClick={resetFilter}>
+              Rest Filters
+            </button>
           </SidebarDropdown>
+
           <SidebarDropdown title="+ History" dropdownId="history">
-          <div onClick={clearHistory} style={{cursor: 'pointer'}}>
-            Clear History...
-          </div>
+            <div onClick={clearHistory} style={{ cursor: 'pointer' }}>
+              Clear History...
+            </div>
             {loadingHistory ? (
               <div className="loading-history">
                 <br></br>
@@ -516,22 +582,24 @@ const Semantor = () => {
 
             <br></br>
 
-            {displayedResults
-              .slice(
-                (currentPage - 1) * itemsPerPage,
-                currentPage * itemsPerPage
+            {
+              hasSearched && displayedResults.length === 0 ? (
+                <p>No results found for the selected date range.</p>
+              ) : (
+                displayedResults
+                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((result, index) => <Result key={index} data={result} userIdea={semanticQuery} />)
               )
-              .map((result, index) => (
-                <Result key={index} data={result} userIdea={semanticQuery} />
-              ))}
+            }
+{effectiveTotalPages > 1 && (
+  <PaginationControls
+    currentPage={currentPage}
+    totalPages={effectiveTotalPages}
+    onPageChange={onPageChange}
+  />
+)}
 
-            {totalPages > 1 && (
-              <PaginationControls
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={onPageChange}
-              />
-            )}
+
           </div>
         </main>
 
