@@ -52,3 +52,25 @@
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
+
+.history-items-container {
+    max-width: 100%; /* Ensures the container takes the full width */
+    padding: 0; /* Adjust if you need padding */
+  }
+  
+  .search-result {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    margin-bottom: 20px;
+    width: 100%; /* Makes the items full width */
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    border-left: 4px solid #00b5ad;
+  }
+  
+  /* Ensure this class applies to the search bar's container as well */
+  .search-section {
+    max-width: 100%; /* Match this to the width of the history items container */
+    padding: 0; /* Match the padding of the history items container */
+  }

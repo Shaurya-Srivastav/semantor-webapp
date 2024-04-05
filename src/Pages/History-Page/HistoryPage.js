@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Assuming you use axios for HTTP requests
 import "./HistoryPage.css";
-import { FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaUser, FaHeart, FaCalendarAlt, FaSearch, FaChevronDown, FaChevronUp, FaSignOutAlt } from "react-icons/fa";
 import Modal from 'react-modal';
 import "react-datepicker/dist/react-datepicker.css";
 import PaginationControls from "../../Components/common/Pagination/PaginationControls";
 import Result from "../../Components/common/Result/Result";
 import { useNavigate } from 'react-router-dom';
-
+import { useAuth } from "../../context/AuthContext";
 Modal.setAppElement('#root');
 
 
 
 const Semantor = () => {
-
+  const { logout } = useAuth();
   const [currentPageMap, setCurrentPageMap] = useState({});
   const itemsPerPage = 10;
 
@@ -146,7 +146,9 @@ const Semantor = () => {
       <header className="semantor-header">
         <h1>SEMANTOR</h1>
         <div className="semantor-user-icons">
-          <FaUser className="user-icon" />
+        <div className="user-dropdown" onClick={logout}>
+            <FaSignOutAlt className="user-icon" />
+          </div>
           <FaHeart className="heart-icon" />
         </div>
       </header>
@@ -208,12 +210,25 @@ const Semantor = () => {
             <br></br>
             <br></br>
 
-
-            {searchHistory.map((historyItem, index) => (
-              <div key={historyItem.id} className="history-query" onClick={() => handleHistoryItemClick(historyItem)}>
-                <h2>{historyItem.query}</h2>
+            <div className="history-items-container"> {/* Make sure this div aligns with your search bar's width */}
+          {searchHistory.map((historyItem, index) => (
+            <div key={historyItem.id} className="search-result" onClick={() => handleHistoryItemClick(historyItem)}>
+              <div className="search-result-header">
+                <div className="search-result-title-section">
+                  <h2 className="search-result-title">{truncateText(historyItem.query, 10)}</h2>
+                  <div className="search-result-subtitle">
+                    {/* If there's additional info like date you want to include, do it here */}
+                    {/* <span>{historyItem.date}</span> */}
+                  </div>
+                </div>
+                <div className="search-result-meta">
+                  {/* Meta information like buttons or icons */}
+                </div>
               </div>
-            ))}
+              {/* Description or other content can go here */}
+            </div>
+          ))}
+        </div>
             
 
 
