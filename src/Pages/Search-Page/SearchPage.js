@@ -136,6 +136,8 @@ const Semantor = () => {
       return;
     }
   
+    setCurrentPage(1); 
+
     setLoading(true);
     setSelectedHistoryResults([]);
   
@@ -223,6 +225,28 @@ const Semantor = () => {
     }
   };
 
+  const clearHistory = async () => {
+    setLoadingHistory(true); // Optionally, start loading indication
+    try {
+      const token = localStorage.getItem("token");
+      // Send a request to the server endpoint to clear the search history
+      await axios.delete("http://150.136.47.221:5000/clear_search_history", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // Assuming the history is cleared successfully on the server, you might want to update the UI accordingly
+      // For example, by clearing the history array in the state
+      setHistory([]);
+      alert("Search history cleared successfully."); // Provide feedback to the user
+    } catch (error) {
+      console.error("Error clearing history:", error);
+      alert("Failed to clear search history."); // Provide error feedback to the user
+    } finally {
+      setLoadingHistory(false); // Optionally, end loading indication
+    }
+  };
+
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
@@ -235,15 +259,20 @@ const Semantor = () => {
 
   const toggleTab = (tab) => {
     setActiveTabs((currentTabs) => {
-        if (currentTabs.includes(tab)) {
-            // If the tab is currently active, filter it out
-            return currentTabs.filter((t) => t !== tab);
-        } else {
-            // If the tab is not active, add it to the array of active tabs
-            return [...currentTabs, tab];
-        }
+      // Check if the current tab is active and it's the only one active
+      if (currentTabs.includes(tab) && currentTabs.length === 1) {
+        // Do not allow unselecting the last active tab
+        return currentTabs;
+      } else if (currentTabs.includes(tab)) {
+        // If the tab is currently active, filter it out
+        return currentTabs.filter((t) => t !== tab);
+      } else {
+        // If the tab is not active, add it to the array of active tabs
+        return [...currentTabs, tab];
+      }
     });
-};
+  };
+  
 
   const toggleDropdown = (dropdown) => {
     setIsOpen({ ...isOpen, [dropdown]: !isOpen[dropdown] });
@@ -284,7 +313,7 @@ const Semantor = () => {
       )}
 
       <header className="semantor-header">
-        <h1>SEMANTOR</h1>
+        <h1>SEMANTOR.AI</h1>
         <div className="semantor-user-icons">
           <div className="user-dropdown" onClick={logout}>
             <FaSignOutAlt className="user-icon" />
@@ -323,7 +352,9 @@ const Semantor = () => {
             </button>
           </SidebarDropdown>
           <SidebarDropdown title="+ History" dropdownId="history">
-            <div>Clear History...</div>
+          <div onClick={clearHistory} style={{cursor: 'pointer'}}>
+            Clear History...
+          </div>
             {loadingHistory ? (
               <div className="loading-history">
                 <br></br>

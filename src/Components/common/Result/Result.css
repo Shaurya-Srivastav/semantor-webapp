@@ -120,8 +120,23 @@
     flex-wrap: wrap;
   }
   
-  .button-open,
   .search-result-action {
+    background-color: #fff;
+    color: #00b5ad;
+    border: 2px solid #00b5ad;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    width: 9%;
+  }
+
+  .button-open{
     background-color: #fff;
     color: #00b5ad;
     border: 2px solid #00b5ad;

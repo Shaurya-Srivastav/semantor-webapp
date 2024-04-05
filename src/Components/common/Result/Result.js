@@ -72,6 +72,8 @@ function Result({ data, userIdea }) {
         {
           userIdea: userIdea, // The user's idea for comparison
           patentIdea: data.abstract, // The abstract from the patent data
+          patentId: data.patent_id,
+          patentTitle: data.title
         },
         {
           headers: {
@@ -164,7 +166,8 @@ function Result({ data, userIdea }) {
             <h3 className="search-result-title">{data.title}</h3>
           </div>
           <div className="search-result-meta">
-            <span className="search-result-number">{data.patent_id}</span>
+            <span className="search-result-number">US{data.patent_id}</span>
+            <span className="search-result-number">{data.date}</span>
             <a
               href={`https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/${data.patent_id}`}
               target="_blank"
