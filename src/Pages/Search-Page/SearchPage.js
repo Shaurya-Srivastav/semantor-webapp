@@ -17,6 +17,7 @@ import PaginationControls from "../../Components/common/Pagination/PaginationCon
 import Result from "../../Components/common/Result/Result";
 import Modal from "react-modal";
 import { useAuth } from "../../context/AuthContext";
+import { useLocation } from 'react-router-dom';
 
 Modal.setAppElement("#root");
 
@@ -63,8 +64,17 @@ const Semantor = () => {
   const [selectedDates, setSelectedDates] = useState({ startDate: new Date(), endDate: new Date() });
   const [unfilteredResults, setUnfilteredResults] = useState([]);
 
+  const location = useLocation();
+  const historyItem = location.state && location.state.historyItem;
 
-
+  useEffect(() => {
+    if (historyItem) {
+      setSearchResults(historyItem.results);
+      setSemanticQuery(historyItem.query);
+      setHasSearched(true);
+      setEffectiveTotalPages(Math.ceil(historyItem.results.length / itemsPerPage));
+    }
+  }, [historyItem]);
 
   useEffect(() => {
     const textArea = document.querySelector(".search-input textarea");
@@ -366,19 +376,25 @@ const Semantor = () => {
     // Reset the date filters to null or initial values
     setFilterStartDate(null);
     setFilterEndDate(null);
-
-    // Reset the searchResults to the original unfiltered results
-    setSearchResults(unfilteredResults);
-
+  
+    // Check if there is a history item
+    if (historyItem) {
+      // If there is a history item, reset the search results to the history item's results
+      setSearchResults(historyItem.results);
+    } else {
+      // If there is no history item, reset the search results to the unfiltered results
+      setSearchResults(unfilteredResults);
+    }
+  
     // Since we are resetting to unfiltered results, we clear the selected history results
     setSelectedHistoryResults([]);
-
-    // Reset the effective total pages to the unfiltered results' page count
-    setEffectiveTotalPages(Math.ceil(unfilteredResults.length / itemsPerPage));
-
+  
+    // Reset the effective total pages based on the reset search results
+    setEffectiveTotalPages(Math.ceil((historyItem ? historyItem.results : unfilteredResults).length / itemsPerPage));
+  
     // Set the current page back to the first page
     setCurrentPage(1);
-
+  
     // Additionally, if you are displaying the date range, you might want to reset that display
     setDisplayDates(false);
   };
@@ -399,7 +415,7 @@ const Semantor = () => {
         <div className="semantor-user-icons">
           <div className="user-dropdown" onClick={logout}>
             <FaSignOutAlt className="user-icon" />
-          </div>
+            </div>
           <FaHeart
             className="heart-icon"
             onClick={() => (window.location.href = "/project")}
@@ -648,34 +664,34 @@ const Semantor = () => {
         </main>
 
         <aside className={`sidebar-right ${isSidebarOpen ? "open" : ""}`}>
-          <aside class="sidebar">
-            <section class="sidebar-section">
-              <h2 class="sidebar-title">Patent Assignee</h2>
-              <ul class="sidebar-list">
+          <aside className="sidebar">
+            <section className="sidebar-section">
+              <h2 className="sidebar-title">Patent Assignee</h2>
+              <ul className="sidebar-list">
                 <li>Business Company</li>
                 <li>Business Company</li>
                 <li>Business Company</li>
-                <li class="sidebar-more">20 MORE...</li>
+                <li className="sidebar-more">20 MORE...</li>
               </ul>
             </section>
 
-            <section class="sidebar-section">
-              <h2 class="sidebar-title">Patent Inventor</h2>
-              <ul class="sidebar-list">
+            <section className="sidebar-section">
+              <h2 className="sidebar-title">Patent Inventor</h2>
+              <ul className="sidebar-list">
                 <li>Business Company</li>
                 <li>Business Company</li>
                 <li>Business Company</li>
-                <li class="sidebar-more">20 MORE...</li>
+                <li className="sidebar-more">20 MORE...</li>
               </ul>
             </section>
 
-            <section class="sidebar-section">
-              <h2 class="sidebar-title">Attorney Name</h2>
-              <ul class="sidebar-list">
+            <section className="sidebar-section">
+              <h2 className="sidebar-title">Attorney Name</h2>
+              <ul className="sidebar-list">
                 <li>Business Company</li>
                 <li>Business Company</li>
                 <li>Business Company</li>
-                <li class="sidebar-more">20 MORE...</li>
+                <li className="sidebar-more">20 MORE...</li>
               </ul>
             </section>
           </aside>
