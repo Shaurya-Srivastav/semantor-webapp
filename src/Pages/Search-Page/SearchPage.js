@@ -106,6 +106,7 @@ const Semantor = () => {
 
   const toggleSearchType = (type) => {
     setSearchActive((prev) => ({ ...prev, [type]: !prev[type] }));
+    setIndexSearchQuery(""); // Reset the keyword search query
   };
 
   const toggleKeywordSearch = () => {
@@ -126,6 +127,10 @@ const Semantor = () => {
     setSemanticQuery(historyEntryResults.query);
     setCurrentPage(1);
 
+    // Reset the keyword search query and close the keyword search bar
+    setIndexSearchQuery("");
+    setSearchActive({ semantic: true, keyword: false });
+
     // Update the total pages in case the history results have a different length than the current searchResults
     setEffectiveTotalPages(Math.ceil(resultsArray.length / itemsPerPage));
 
@@ -140,6 +145,7 @@ const Semantor = () => {
       setSearchResults(resultsArray);
     }
   };
+
 
   const onPageChange = (page) => {
     setCurrentPage(page);
@@ -214,10 +220,11 @@ const Semantor = () => {
       console.log(response.data["Granted results"]);
       setSearchResults(response.data["Granted results"]);
       setUnfilteredResults(response.data["Granted results"]); // Set unfiltered results here after a new search
-      await saveSearchHistory(trimmedSemanticQuery, response.data["Granted results"]);
       setLoading(false);
+      await saveSearchHistory(trimmedSemanticQuery, response.data["Granted results"]);
       await fetchHistory();
     } catch (error) {
+      setLoading(false);
       alert("Search error: " + (error.response ? error.response.data.message : "An error occurred"));
     } finally {
       setEffectiveTotalPages(Math.ceil(searchResults.length / itemsPerPage));
@@ -358,7 +365,7 @@ const Semantor = () => {
 
       if (filteredResults.length === 0) {
         // Alert the user that no patents are found
-        alert("No patents found for the selected date range.");
+        alert("No patents found!");
       } else {
         // There are results, update the state to display them
         setSearchResults(filteredResults); // Now updating searchResults
@@ -376,7 +383,7 @@ const Semantor = () => {
     // Reset the date filters to null or initial values
     setFilterStartDate(null);
     setFilterEndDate(null);
-  
+
     // Check if there is a history item
     if (historyItem) {
       // If there is a history item, reset the search results to the history item's results
@@ -385,16 +392,16 @@ const Semantor = () => {
       // If there is no history item, reset the search results to the unfiltered results
       setSearchResults(unfilteredResults);
     }
-  
+
     // Since we are resetting to unfiltered results, we clear the selected history results
     setSelectedHistoryResults([]);
-  
+
     // Reset the effective total pages based on the reset search results
     setEffectiveTotalPages(Math.ceil((historyItem ? historyItem.results : unfilteredResults).length / itemsPerPage));
-  
+
     // Set the current page back to the first page
     setCurrentPage(1);
-  
+
     // Additionally, if you are displaying the date range, you might want to reset that display
     setDisplayDates(false);
   };
@@ -415,7 +422,7 @@ const Semantor = () => {
         <div className="semantor-user-icons">
           <div className="user-dropdown" onClick={logout}>
             <FaSignOutAlt className="user-icon" />
-            </div>
+          </div>
           <FaHeart
             className="heart-icon"
             onClick={() => (window.location.href = "/project")}
@@ -426,7 +433,8 @@ const Semantor = () => {
       <div className="semantor-body">
         <aside className="semantor-sidebar">
           <div className="sidebar-item">
-            <a href="/project">Your Projects</a>
+            {/* <a href="/project">Your Projects</a> */}
+            <a>Your Projects</a>
           </div>
           <br></br>
           <div className="sidebar-item">
@@ -642,22 +650,26 @@ const Semantor = () => {
 
             <br></br>
 
+
             {
               hasSearched && displayedResults.length === 0 ? (
-                <p>No results found for the selected date range.</p>
+                <p>No results found!</p>
               ) : (
-                displayedResults
-                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                  .map((result, index) => <Result key={index} data={result} userIdea={semanticQuery} />)
+                <>
+                  {displayedResults
+                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    .map((result, index) => <Result key={index} data={result} userIdea={semanticQuery} />)
+                  }
+                  {displayedResults.length > itemsPerPage && (
+                    <PaginationControls
+                      currentPage={currentPage}
+                      totalPages={effectiveTotalPages}
+                      onPageChange={onPageChange}
+                    />
+                  )}
+                </>
               )
             }
-            {effectiveTotalPages > 1 && (
-              <PaginationControls
-                currentPage={currentPage}
-                totalPages={effectiveTotalPages}
-                onPageChange={onPageChange}
-              />
-            )}
 
 
           </div>

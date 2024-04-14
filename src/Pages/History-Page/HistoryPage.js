@@ -34,6 +34,8 @@ const Semantor = () => {
   const [selectedDates, setSelectedDates] = useState({ startDate: null, endDate: null });
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
 
+  
+
   useEffect(() => {
     fetchSearchHistory();
   }, []);
@@ -197,7 +199,10 @@ const Semantor = () => {
   const totalPages = Math.ceil(filteredSearchHistory.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const displayedHistory = filteredSearchHistory.slice(startIndex, endIndex);
+  const displayedHistory = filteredSearchHistory
+    .slice()
+    .reverse()
+    .slice(startIndex, endIndex);
 
   const handleStartDateChange = (e) => {
     const newStartDate = new Date(e.target.value);
@@ -234,7 +239,10 @@ const Semantor = () => {
 
       <div className="semantor-body">
         <aside className="semantor-sidebar">
-          <div className="sidebar-item"><a href="/project">Your Projects</a></div>
+          <div className="sidebar-item">
+            {/* <a href="/project">Your Projects</a> */}
+            <a>Your Projects</a>
+            </div>
           <br></br>
           <div className="sidebar-item"><a href="/search">Back to Search....</a></div>
           <br />
