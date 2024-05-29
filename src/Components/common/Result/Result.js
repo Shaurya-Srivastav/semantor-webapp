@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./Result.css";
 import { FaHeart, FaRegHeart, FaFileDownload } from "react-icons/fa";
 import Modal from "react-modal";
@@ -6,8 +6,7 @@ import axios from "axios";
 import { BeatLoader } from "react-spinners";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
-import { useLoading } from '../../../context/LoadingContext'; // Adjust the import path as needed
-
+import { useLoading } from "../../../context/LoadingContext"; // Adjust the import path as needed
 
 function Result({ data, userIdea }) {
   // State for modal, like button, and comparison results
@@ -15,8 +14,15 @@ function Result({ data, userIdea }) {
   const [isLiked, setIsLiked] = useState(false);
   const [comparisonResult, setComparisonResult] = useState("");
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
 
-  const { isLoading, startLoading, stopLoading, loadingAction, loadingResultId } = useLoading();
+  const {
+    isLoading,
+    startLoading,
+    stopLoading,
+    loadingAction,
+    loadingResultId,
+  } = useLoading();
 
   // Unique identifier for this instance of Result, assuming data.patent_id is unique
   const resultId = data.patent_id;
@@ -32,7 +38,7 @@ function Result({ data, userIdea }) {
   const [highlightTriggered, setHighlightTriggered] = useState(false);
 
   const highlightSentences = async () => {
-    startLoading('highlight', resultId);
+    startLoading("highlight", resultId);
     setHighlightTriggered(false); // Reset this flag each time the function is called
     const token = localStorage.getItem("token");
 
@@ -63,7 +69,7 @@ function Result({ data, userIdea }) {
 
   const openCompareModal = async (e) => {
     e.preventDefault();
-    startLoading('compare', resultId); // Notify that the 'compare' action is starting with this resultId
+    startLoading("compare", resultId); // Notify that the 'compare' action is starting with this resultId
 
     try {
       const token = localStorage.getItem("token");
@@ -73,7 +79,7 @@ function Result({ data, userIdea }) {
           userIdea: userIdea, // The user's idea for comparison
           patentIdea: data.abstract, // The abstract from the patent data
           patentId: data.patent_id,
-          patentTitle: data.title
+          patentTitle: data.title,
         },
         {
           headers: {
@@ -89,13 +95,13 @@ function Result({ data, userIdea }) {
     } catch (error) {
       // If there's an error, log it and set an error message
       console.error("Failed to compare ideas:", error);
-      setComparisonResult("Failed to fetch comparison. Please try again later.");
+      setComparisonResult(
+        "Failed to fetch comparison. Please try again later."
+      );
     } finally {
       stopLoading(); // Notify that the loading process has ended regardless of the outcome
     }
   };
-
-
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -151,6 +157,63 @@ function Result({ data, userIdea }) {
 
   const claimsListItems = formatClaims(data.claims);
 
+  const openChatModal = () => {
+    setIsChatModalOpen(true);
+  };
+
+  const [userMessage, setUserMessage] = useState("");
+  const [chatMessages, setChatMessages] = useState([]);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+
+  const sendMessage = async () => {
+  if (userMessage.trim() !== "") {
+    const newMessage = {
+      sender: "user",
+      content: userMessage,
+    };
+    setChatMessages([...chatMessages, newMessage]);
+    setUserMessage("");
+    setIsChatLoading(true); // Set isChatLoading to true before sending the request
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://150.136.47.221:5000/chat",
+        {
+          patentId: data.patent_id,
+          userMessage: newMessage.content,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const assistantMessage = {
+        sender: "assistant",
+        content: response.data.response,
+      };
+      setChatMessages([...chatMessages, newMessage, assistantMessage]);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      const errorMessage = {
+        sender: "assistant",
+        content: "Sorry, an error occurred. Please try again later.",
+      };
+      setChatMessages([...chatMessages, newMessage, errorMessage]);
+    } finally {
+      setIsChatLoading(false); // Set isChatLoading to false after receiving the response
+    }
+  }
+};
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
   return (
     <div>
       <div className="search-result">
@@ -188,10 +251,12 @@ function Result({ data, userIdea }) {
             onClick={openCompareModal}
             disabled={isLoading}
           >
-            {isLoading && loadingAction === 'compare' && loadingResultId === data.patent_id ? (
+            {isLoading &&
+            loadingAction === "compare" &&
+            loadingResultId === data.patent_id ? (
               <BeatLoader color="#00b5ad" size={10} />
             ) : (
-              "DESCRIBE/COMPARE"
+              "DESCRIBE / COMPARE"
             )}
           </button>
           <button
@@ -199,11 +264,20 @@ function Result({ data, userIdea }) {
             onClick={highlightSentences}
             disabled={isLoading}
           >
-            {isLoading && loadingAction === 'highlight' && loadingResultId === data.patent_id ? (
+            {isLoading &&
+            loadingAction === "highlight" &&
+            loadingResultId === data.patent_id ? (
               <BeatLoader color="#00b5ad" size={10} />
             ) : (
               "HIGHLIGHT"
             )}
+          </button>
+          <button
+            className="search-result-action"
+            onClick={openChatModal}
+            disabled={isLoading}
+          >
+            CHAT
           </button>
           {/* Other buttons don't have specific loading animations; they are just disabled during loading */}
           <button
@@ -213,13 +287,13 @@ function Result({ data, userIdea }) {
           >
             GOOGLE PATENT
           </button>
-          <button
+          {/* <button
             className="search-result-action"
             // If you have a handler for saving to project, add it here
             disabled={isLoading}
           >
             SAVE TO PROJECT
-          </button>
+          </button> */}
           <button
             className="search-result-action"
             onClick={() => openUSPTO(data.patent_id)}
@@ -228,7 +302,6 @@ function Result({ data, userIdea }) {
             USPTO
           </button>
         </div>
-
       </div>
       {/* Modal for Comparison Results */}
       <Modal
@@ -277,54 +350,63 @@ function Result({ data, userIdea }) {
           <h3>Abstract</h3>
           <p>
             {highlightTriggered
-              ? data.abstract.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
-                const highlight = highlightResult.highlights.abstract.some(
-                  (highlightSentence) => sentence.includes(highlightSentence)
-                );
-                return highlight ? (
-                  <span key={idx} style={{ backgroundColor: "yellow" }}>
-                    {sentence}{" "}
-                  </span>
-                ) : (
-                  <span key={idx}>{sentence}. </span>
-                );
-              })
+              ? data.abstract
+                  .split(/(?<=\.)\s+|(?<=\.)$/)
+                  .map((sentence, idx) => {
+                    const highlight = highlightResult.highlights.abstract.some(
+                      (highlightSentence) =>
+                        sentence.includes(highlightSentence)
+                    );
+                    return highlight ? (
+                      <span key={idx} style={{ backgroundColor: "yellow" }}>
+                        {sentence}{" "}
+                      </span>
+                    ) : (
+                      <span key={idx}>{sentence}. </span>
+                    );
+                  })
               : displayOrDefault(data.abstract)}
           </p>
           {/* Claims Section */}
           <h3>Claims</h3>
           <p>
             {highlightTriggered
-              ? data.claims.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
-                const highlight = highlightResult.highlights.claims.some(
-                  (highlightSentence) => sentence.includes(highlightSentence)
-                );
-                return highlight ? (
-                  <span key={idx} style={{ backgroundColor: "yellow" }}>
-                    {sentence}{" "}
-                  </span>
-                ) : (
-                  <span key={idx}>{sentence}. </span>
-                );
-              })
+              ? data.claims
+                  .split(/(?<=\.)\s+|(?<=\.)$/)
+                  .map((sentence, idx) => {
+                    const highlight = highlightResult.highlights.claims.some(
+                      (highlightSentence) =>
+                        sentence.includes(highlightSentence)
+                    );
+                    return highlight ? (
+                      <span key={idx} style={{ backgroundColor: "yellow" }}>
+                        {sentence}{" "}
+                      </span>
+                    ) : (
+                      <span key={idx}>{sentence}. </span>
+                    );
+                  })
               : displayOrDefault(data.claims)}
           </p>
           {/* Summary Section */}
           <h3>Summary</h3>
           <p>
             {highlightTriggered
-              ? data.summary.split(/(?<=\.)\s+|(?<=\.)$/).map((sentence, idx) => {
-                const highlight = highlightResult.highlights.summary.some(
-                  (highlightSentence) => sentence.includes(highlightSentence)
-                );
-                return highlight ? (
-                  <span key={idx} style={{ backgroundColor: "yellow" }}>
-                    {sentence}{" "}
-                  </span>
-                ) : (
-                  <span key={idx}>{sentence}. </span>
-                );
-              })
+              ? data.summary
+                  .split(/(?<=\.)\s+|(?<=\.)$/)
+                  .map((sentence, idx) => {
+                    const highlight = highlightResult.highlights.summary.some(
+                      (highlightSentence) =>
+                        sentence.includes(highlightSentence)
+                    );
+                    return highlight ? (
+                      <span key={idx} style={{ backgroundColor: "yellow" }}>
+                        {sentence}{" "}
+                      </span>
+                    ) : (
+                      <span key={idx}>{sentence}. </span>
+                    );
+                  })
               : displayOrDefault(data.summary)}
           </p>
         </div>
@@ -334,6 +416,58 @@ function Result({ data, userIdea }) {
               closeModal();
               setHighlightTriggered(false);
             }}
+            className="close-button"
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+  isOpen={isChatModalOpen}
+  onRequestClose={() => setIsChatModalOpen(false)}
+  contentLabel="Chat Modal"
+  className="modal chat-modal"
+  overlayClassName="overlay"
+>
+        <h2>Chat with Patent {data.patent_id}</h2>
+        <div className="chat-container">
+          <div className="chat-messages">
+            {/* Render chat messages here */}
+            {chatMessages.map((message, index) => (
+              <div
+                key={index}
+                className={`chat-message ${
+                  message.sender === "user"
+                    ? "user-message"
+                    : "assistant-message"
+                }`}
+              >
+                <div className="message-content">{message.content}</div>
+              </div>
+            ))}
+            {isChatLoading && (
+        <div className="chat-message assistant-message">
+          <div className="message-content">
+            <BeatLoader color="#00b5ad" size={10} />
+          </div>
+        </div>
+      )}
+          </div>
+          <div className="chat-input">
+            <input
+              type="text"
+              value={userMessage}
+              onChange={(e) => setUserMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+            />
+            <button onClick={sendMessage}>Send</button>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button
+            onClick={() => setIsChatModalOpen(false)}
             className="close-button"
           >
             Close
